@@ -35,6 +35,23 @@ function getAxeYPath(space: number, margin: number, max: Max): string {
   } `;
 }
 
+function getOriginX(space: number, margin: number, max: Max): number {
+  return margin + space * (-1 * max.negX);
+}
+
+function getOriginY(space: number, margin: number, max: Max): number {
+  return margin + space * max.posY;
+}
+
+function numbersArray(i: number, n: number): number[] {
+  let tmp: number[] = [];
+  while (i <= n) {
+    tmp.push(i);
+    i++;
+  }
+  return tmp;
+}
+
 export function GraphComponent(props: GraphProps) {
   let margin = props.margin ? props.margin : 50;
   let pointSpace = props.pointSpace ? props.pointSpace : 50;
@@ -54,10 +71,69 @@ export function GraphComponent(props: GraphProps) {
             d={getAxeYPath(pointSpace, margin, props.max)}
           ></path>
         </g>
-        {/* <path
-          className="g_axes"
-          d={getAxesPath(svgWidth, svgHeigth, margin)}
-        ></path>
+        <g>
+          <g>
+            <text
+              x={getOriginX(pointSpace, margin, props.max)}
+              y={getOriginY(pointSpace, margin, props.max)}
+              className="g_axes_point"
+            >
+              0
+            </text>
+          </g>
+          <g className="g_y_point">
+            {numbersArray(1, props.max.posY).map((n) => (
+              <text
+                x={getOriginX(pointSpace, margin, props.max)}
+                y={getOriginY(pointSpace, margin, props.max) - 50 * n}
+                className="g_axes_point"
+              >
+                {n}
+              </text>
+            ))}
+            {numbersArray(props.max.negY, -1).map((n) => (
+              <text
+                x={getOriginX(pointSpace, margin, props.max)}
+                y={getOriginY(pointSpace, margin, props.max) + 50 * -1 * n}
+                className="g_axes_point"
+              >
+                {n}
+              </text>
+            ))}
+          </g>
+          <g className="g_x_point">
+            {numbersArray(1, props.max.posX).map((n) => (
+              <text
+                x={getOriginX(pointSpace, margin, props.max) + 50 * n}
+                y={getOriginY(pointSpace, margin, props.max)}
+                className="g_axes_point"
+              >
+                {n}
+              </text>
+            ))}
+            {numbersArray(props.max.negX, -1).map((n) => (
+              <text
+                x={getOriginX(pointSpace, margin, props.max) + 50 * -1 * n}
+                y={getOriginY(pointSpace, margin, props.max)}
+                className="g_axes_point"
+              >
+                {n}
+              </text>
+            ))}
+          </g>
+        </g>
+        {/* <g className="g_y_point">
+          {numbersArray(props.maxY).map((n) => (
+            <text
+              x={margin - 16}
+              y={svgHeigth - 50 - 50 * n}
+              className="g_axes_point"
+            >
+              {n}
+            </text>
+          ))}
+        </g> */}
+        {/* 
         <g>
           <text
             x={margin - 16}
