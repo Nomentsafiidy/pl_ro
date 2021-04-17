@@ -4,9 +4,15 @@ import { Constraint } from "src/models/constraint";
 //components imports
 import { ConstraintComponent } from "src/components/constraint/constraint.component";
 import { VariableComponent } from "src/components/variable/variable.component";
-import { Variables } from "src/models/pl.type";
+import { Variables, Point } from "src/models/pl.type";
 
 type PlPageSate = {
+  max: {
+    posX: number;
+    posY: number;
+    negX: number;
+    negY: number;
+  };
   variables: Variables;
   constraints: Constraint[];
 };
@@ -15,6 +21,12 @@ export class PLPage extends Component<any, PlPageSate> {
   constructor(props: any) {
     super(props);
     this.state = {
+      max: {
+        posX: 0,
+        posY: 0,
+        negX: 0,
+        negY: 0,
+      },
       variables: {
         x: "",
         y: "",
@@ -60,9 +72,36 @@ export class PLPage extends Component<any, PlPageSate> {
     });
   }
 
-  setConstraintsState(constraint: Constraint[]) {
+  setConstraintsState(constraints: Constraint[]) {
+    let max = {
+      posX: 0,
+      posY: 0,
+      negX: 0,
+      negY: 0,
+    };
+    let points: Point[] = [];
+    constraints.forEach((constraint) => {
+      if (constraint.isContrainte()) {
+        points = constraint.getXYIntersectionPoints();
+        points.forEach((point) => {
+          if (point.x > max.posX) {
+            max.posX = point.x;
+          }
+          if (point.y > max.posY) {
+            max.posY = point.y;
+          }
+          if (point.x < max.negX) {
+            max.negX = point.x;
+          }
+          if (point.y < max.negY) {
+            max.negY = point.y;
+          }
+        });
+      }
+    });
     this.setState({
-      constraints: constraint,
+      constraints: constraints,
+      max,
     });
   }
 
@@ -136,7 +175,34 @@ export class PLPage extends Component<any, PlPageSate> {
             />
           ))}
         </div>
-        <div>{this.constraintsValidations() ? "okay" : "tsy okay"}</div>
+        <div>
+          {this.constraintsValidations() &&
+            this.state.constraints.map((constraint) => (
+              <div>
+                <div>
+                  {" "}
+                  Graph points{JSON.stringify(constraint.getGraphPoints())}
+                </div>
+                <br />
+                <div>
+                  {" "}
+                  Graph getXYIntersectionPoints
+                  {JSON.stringify(constraint.getXYIntersectionPoints())}
+                </div>
+                <br />
+                <div>
+                  {" "}
+                  Graph getNotSolutionsPoints
+                  {JSON.stringify(
+                    constraint.getNotSolutionsPoints(
+                      this.state.max.posX,
+                      this.state.max.posY
+                    )
+                  )}
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     );
   }
