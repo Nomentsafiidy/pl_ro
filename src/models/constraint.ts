@@ -75,7 +75,7 @@ export class Constraint {
             ? -1 * parseFloat(tmp[6])
             : -1 * 1
           : parseFloat(tmp[6] ? tmp[6] : "1");
-      tmpC = tmp[14] === "-" ? -1 * parseFloat(tmp[15]) : parseFloat(tmp[15]);
+      tmpC = tmp[12] === "-" ? -1 * parseFloat(tmp[13]) : parseFloat(tmp[13]);
       this.funcAffine = {
         x: {
           constant: tmpCX,
