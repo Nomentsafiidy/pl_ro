@@ -5,7 +5,7 @@
 }
 .g_axes_point {
   stroke: black;
-  stroke-width: 0.5px;
+  stroke-width: 1px;
   text-anchor: middle;
   baseline-shift: -0.5ex;
   font-size: 16px;
@@ -13,8 +13,7 @@
 .g_function {
   fill: transparent;
   stroke-width: 1px;
-  stroke: black;
 }
 .g_fill {
-  fill: rgba(47, 240, 47, 0.5);
+  opacity: 0.3;
 }

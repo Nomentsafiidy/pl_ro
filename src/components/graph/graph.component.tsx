@@ -57,14 +57,20 @@ function getPointPath(
   margin: number,
   space: number,
   max: Max,
-  constraint: Constraint
+  constraint: Constraint,
+  func: string
 ): string {
   let path = "";
   let o = {
     x: getOriginX(margin, space, max),
     y: getOriginY(margin, space, max),
   };
-  let tmpPoints: Point[] = constraint.getGraphPoints();
+  let tmpPoints: Point[] = [];
+  if (func === "getGraphPoints") {
+    tmpPoints = constraint.getGraphPoints();
+  } else if (func === "getNotSolutionsPoints") {
+    tmpPoints = constraint.getNotSolutionsPoints(max.posX, max.posY);
+  }
   console.log("graph points", tmpPoints);
 
   let tmpP: Point;
@@ -183,23 +189,28 @@ export function GraphComponent(props: GraphProps) {
         {props.constraints.map((constraint, id) => (
           <g>
             <path
+              className="g_fill"
+              d={getPointPath(
+                margin,
+                pointSpace,
+                props.max,
+                constraint,
+                "getNotSolutionsPoints"
+              )}
+              fill={constraint.getColor()}
+            ></path>
+            <path
               key={id}
               className="g_function"
-              d={getPointPath(margin, pointSpace, props.max, constraint)}
+              d={getPointPath(
+                margin,
+                pointSpace,
+                props.max,
+                constraint,
+                "getGraphPoints"
+              )}
+              stroke={constraint.getColor()}
             ></path>
-            {
-              // <path
-              //   className="g_fill"
-              //   d={getPointPath(
-              //     svgHeigth,
-              //     margin,
-              //     pointSpace,
-              //     props.maxX,
-              //     props.maxY,
-              //     constraint.getNotSolutionsPoints()
-              //   )}
-              // ></path>
-            }
           </g>
         ))}
         {/* {<path
