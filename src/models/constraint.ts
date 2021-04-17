@@ -312,7 +312,6 @@ export class Constraint {
       switch (func.arithOper) {
         case "+":
           tmpPoint.y = (func.c + -1 * func.x.constant * x) / func.y.constant;
-          console.log("tmpPoint.y", tmpPoint.y);
           break;
         case "-":
           tmpPoint.y =

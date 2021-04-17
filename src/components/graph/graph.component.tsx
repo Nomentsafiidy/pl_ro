@@ -1,4 +1,5 @@
 import { Constraint } from "src/models/constraint";
+import { Point } from "src/models/pl.type";
 import "./graph.css";
 type Max = {
   posX: number;
@@ -52,6 +53,57 @@ function numbersArray(i: number, n: number): number[] {
   return tmp;
 }
 
+function getPointPath(
+  margin: number,
+  space: number,
+  max: Max,
+  constraint: Constraint
+): string {
+  let path = "";
+  let o = {
+    x: getOriginX(margin, space, max),
+    y: getOriginY(margin, space, max),
+  };
+  let tmpPoints: Point[] = constraint.getGraphPoints();
+  console.log("graph points", tmpPoints);
+
+  let tmpP: Point;
+  if (tmpPoints.length !== 0) {
+    path += "M ";
+    tmpPoints.forEach((point, index) => {
+      if (
+        point.y === Number.NEGATIVE_INFINITY ||
+        point.y === Number.POSITIVE_INFINITY
+      ) {
+        tmpP = constraint.getPointByY(
+          constraint.getFuncAffine(),
+          point.y === Number.NEGATIVE_INFINITY ? max.negY : max.posY
+        );
+      } else if (
+        point.x === Number.NEGATIVE_INFINITY ||
+        point.x === Number.POSITIVE_INFINITY
+      ) {
+        tmpP = constraint.getPointByX(
+          constraint.getFuncAffine(),
+          point.x === Number.NEGATIVE_INFINITY ? max.negX : max.posX
+        );
+      } else {
+        tmpP = point;
+      }
+      console.log("tmpP", tmpP);
+
+      path += `${o.x + space * tmpP.x} ${o.y + -1 * space * tmpP.y}`;
+      if (index !== tmpPoints.length - 1) {
+        path += " L ";
+      }
+    });
+  }
+  console.log("" + constraint.getFuncString() + " psth :" + path);
+  console.log("Max", max);
+
+  return path;
+}
+
 export function GraphComponent(props: GraphProps) {
   let margin = props.margin ? props.margin : 50;
   let pointSpace = props.pointSpace ? props.pointSpace : 50;
@@ -85,7 +137,7 @@ export function GraphComponent(props: GraphProps) {
             {numbersArray(1, props.max.posY).map((n) => (
               <text
                 x={getOriginX(pointSpace, margin, props.max)}
-                y={getOriginY(pointSpace, margin, props.max) - 50 * n}
+                y={getOriginY(pointSpace, margin, props.max) - pointSpace * n}
                 className="g_axes_point"
               >
                 {n}
@@ -94,7 +146,10 @@ export function GraphComponent(props: GraphProps) {
             {numbersArray(props.max.negY, -1).map((n) => (
               <text
                 x={getOriginX(pointSpace, margin, props.max)}
-                y={getOriginY(pointSpace, margin, props.max) + 50 * -1 * n}
+                y={
+                  getOriginY(pointSpace, margin, props.max) +
+                  pointSpace * -1 * n
+                }
                 className="g_axes_point"
               >
                 {n}
@@ -104,7 +159,7 @@ export function GraphComponent(props: GraphProps) {
           <g className="g_x_point">
             {numbersArray(1, props.max.posX).map((n) => (
               <text
-                x={getOriginX(pointSpace, margin, props.max) + 50 * n}
+                x={getOriginX(pointSpace, margin, props.max) + pointSpace * n}
                 y={getOriginY(pointSpace, margin, props.max)}
                 className="g_axes_point"
               >
@@ -113,7 +168,10 @@ export function GraphComponent(props: GraphProps) {
             ))}
             {numbersArray(props.max.negX, -1).map((n) => (
               <text
-                x={getOriginX(pointSpace, margin, props.max) + 50 * -1 * n}
+                x={
+                  getOriginX(pointSpace, margin, props.max) +
+                  pointSpace * -1 * n
+                }
                 y={getOriginY(pointSpace, margin, props.max)}
                 className="g_axes_point"
               >
@@ -122,78 +180,28 @@ export function GraphComponent(props: GraphProps) {
             ))}
           </g>
         </g>
-        {/* <g className="g_y_point">
-          {numbersArray(props.maxY).map((n) => (
-            <text
-              x={margin - 16}
-              y={svgHeigth - 50 - 50 * n}
-              className="g_axes_point"
-            >
-              {n}
-            </text>
-          ))}
-        </g> */}
-        {/* 
-        <g>
-          <text
-            x={margin - 16}
-            y={svgHeigth - 50 + 16}
-            className="g_axes_point_origin"
-          >
-            0
-          </text>
-        </g>
-        <g className="g_y_point">
-          {numbersArray(props.maxY).map((n) => (
-            <text
-              x={margin - 16}
-              y={svgHeigth - 50 - 50 * n}
-              className="g_axes_point"
-            >
-              {n}
-            </text>
-          ))}
-        </g>
-        <g className="g_y_point">
-          {numbersArray(props.maxX).map((n) => (
-            <text
-              x={margin + 50 * n}
-              y={svgHeigth - 50 + 16}
-              className="g_axes_point"
-            >
-              {n}
-            </text>
-          ))}
-        </g>
         {props.constraints.map((constraint, id) => (
           <g>
             <path
               key={id}
               className="g_function"
-              d={getPointPath(
-                svgHeigth,
-                margin,
-                pointSpace,
-                props.maxX,
-                props.maxY,
-                constraint.getPoints()
-              )}
+              d={getPointPath(margin, pointSpace, props.max, constraint)}
             ></path>
             {
-              <path
-                className="g_fill"
-                d={getPointPath(
-                  svgHeigth,
-                  margin,
-                  pointSpace,
-                  props.maxX,
-                  props.maxY,
-                  constraint.getNotSolutionsPoints()
-                )}
-              ></path>
+              // <path
+              //   className="g_fill"
+              //   d={getPointPath(
+              //     svgHeigth,
+              //     margin,
+              //     pointSpace,
+              //     props.maxX,
+              //     props.maxY,
+              //     constraint.getNotSolutionsPoints()
+              //   )}
+              // ></path>
             }
           </g>
-        ))} */}
+        ))}
         {/* {<path
               className='g_function'
               d={getPointPath(svgHeigth, margin, pointSpace, [

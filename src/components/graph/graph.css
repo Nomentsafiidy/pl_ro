@@ -10,3 +10,11 @@
   baseline-shift: -0.5ex;
   font-size: 16px;
 }
+.g_function {
+  fill: transparent;
+  stroke-width: 1px;
+  stroke: black;
+}
+.g_fill {
+  fill: rgba(47, 240, 47, 0.5);
+}
