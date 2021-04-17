@@ -18,7 +18,6 @@ export class Constraint {
   constructor(id: number, func: string) {
     this.id = id;
     this.funcString = func;
-    Constraint.funcRegExp = new RegExp("");
     this.color = this.generateColor();
   }
 
@@ -57,7 +56,7 @@ export class Constraint {
   }
 
   public isContrainte = (): boolean => {
-    if (Constraint.funcRegExp.test(this.funcString)) {
+    if (Constraint.funcRegExp && Constraint.funcRegExp.test(this.funcString)) {
       return true;
     } else {
       return false;
