@@ -187,34 +187,6 @@ export class PLPage extends Component<any, PlPageSate> {
           </div>
         </div>
         <div>
-          {this.constraintsValidations() &&
-            this.state.constraints.map((constraint) => (
-              <div>
-                <div>
-                  {" "}
-                  Graph points{JSON.stringify(constraint.getGraphPoints())}
-                </div>
-                <br />
-                <div>
-                  {" "}
-                  Graph getXYIntersectionPoints
-                  {JSON.stringify(constraint.getXYIntersectionPoints())}
-                </div>
-                <br />
-                <div>
-                  {" "}
-                  Graph getNotSolutionsPoints
-                  {JSON.stringify(
-                    constraint.getNotSolutionsPoints(
-                      this.state.max.posX,
-                      this.state.max.posY
-                    )
-                  )}
-                </div>
-              </div>
-            ))}
-        </div>
-        <div>
           {this.constraintsValidations() && (
             <GraphComponent
               max={this.state.max}

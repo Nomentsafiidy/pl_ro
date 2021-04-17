@@ -140,8 +140,9 @@ export function GraphComponent(props: GraphProps) {
             </text>
           </g>
           <g className="g_y_point">
-            {numbersArray(1, props.max.posY).map((n) => (
+            {numbersArray(1, props.max.posY).map((n, i) => (
               <text
+                key={"y" + n + i}
                 x={getOriginX(pointSpace, margin, props.max)}
                 y={getOriginY(pointSpace, margin, props.max) - pointSpace * n}
                 className="g_axes_point"
@@ -149,8 +150,9 @@ export function GraphComponent(props: GraphProps) {
                 {n}
               </text>
             ))}
-            {numbersArray(props.max.negY, -1).map((n) => (
+            {numbersArray(props.max.negY, -1).map((n, i) => (
               <text
+                key={"y" + n + i}
                 x={getOriginX(pointSpace, margin, props.max)}
                 y={
                   getOriginY(pointSpace, margin, props.max) +
@@ -163,8 +165,9 @@ export function GraphComponent(props: GraphProps) {
             ))}
           </g>
           <g className="g_x_point">
-            {numbersArray(1, props.max.posX).map((n) => (
+            {numbersArray(1, props.max.posX).map((n, i) => (
               <text
+                key={"x" + n + i}
                 x={getOriginX(pointSpace, margin, props.max) + pointSpace * n}
                 y={getOriginY(pointSpace, margin, props.max)}
                 className="g_axes_point"
@@ -172,8 +175,9 @@ export function GraphComponent(props: GraphProps) {
                 {n}
               </text>
             ))}
-            {numbersArray(props.max.negX, -1).map((n) => (
+            {numbersArray(props.max.negX, -1).map((n, i) => (
               <text
+                key={"x" + n + i}
                 x={
                   getOriginX(pointSpace, margin, props.max) +
                   pointSpace * -1 * n
@@ -189,6 +193,7 @@ export function GraphComponent(props: GraphProps) {
         {props.constraints.map((constraint, id) => (
           <g>
             <path
+              key={"f" + id}
               className="g_fill"
               d={getPointPath(
                 margin,
