@@ -9,6 +9,7 @@ import {
 // ax+ by = c
 export class Constraint {
   private id: number;
+  private color: string;
   private static variables: Variables;
   private static funcRegExp: RegExp;
   private funcString: string;
@@ -18,6 +19,7 @@ export class Constraint {
     this.id = id;
     this.funcString = func;
     Constraint.funcRegExp = new RegExp("");
+    this.color = this.generateColor();
   }
 
   public static setVariables = (variables: Variables) => {
@@ -49,6 +51,10 @@ export class Constraint {
       this.setFunctionAffine(Constraint.funcRegExp, this.funcString);
     }
   };
+
+  public getColor(): string {
+    return this.color;
+  }
 
   public isContrainte = (): boolean => {
     if (Constraint.funcRegExp.test(this.funcString)) {
@@ -354,4 +360,9 @@ export class Constraint {
     }
     return result;
   }
+
+  generateColor = (): string => {
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+    return "#" + randomColor;
+  };
 }

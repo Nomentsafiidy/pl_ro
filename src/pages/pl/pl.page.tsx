@@ -1,10 +1,11 @@
 import { Component } from "react";
 import { Constraint } from "src/models/constraint";
-
+//models / type imports
+import { Variables, Point } from "src/models/pl.type";
 //components imports
 import { ConstraintComponent } from "src/components/constraint/constraint.component";
 import { VariableComponent } from "src/components/variable/variable.component";
-import { Variables, Point } from "src/models/pl.type";
+import { GraphComponent } from "src/components/graph/graph.component";
 
 type PlPageSate = {
   max: {
@@ -39,6 +40,7 @@ export class PLPage extends Component<any, PlPageSate> {
     this.removeConstraint = this.removeConstraint.bind(this);
     this.constraintChange = this.constraintChange.bind(this);
     this.setConstraintsState = this.setConstraintsState.bind(this);
+    this.addNewConstraint = this.addNewConstraint.bind(this);
   }
 
   //logic fonction
@@ -134,6 +136,12 @@ export class PLPage extends Component<any, PlPageSate> {
     this.setConstraintsState(tmp);
   }
 
+  addNewConstraint = () => {
+    let tmp = this.state.constraints;
+    tmp.push(new Constraint(tmp.length, ""));
+    this.setConstraintsState(tmp);
+  };
+
   render() {
     return (
       <div>
@@ -174,6 +182,9 @@ export class PLPage extends Component<any, PlPageSate> {
               })()}
             />
           ))}
+          <div onClick={this.addNewConstraint}>
+            <button>add</button>
+          </div>
         </div>
         <div>
           {this.constraintsValidations() &&
@@ -202,6 +213,14 @@ export class PLPage extends Component<any, PlPageSate> {
                 </div>
               </div>
             ))}
+        </div>
+        <div>
+          {this.constraintsValidations() && (
+            <GraphComponent
+              max={this.state.max}
+              constraints={this.state.constraints}
+            />
+          )}
         </div>
       </div>
     );
