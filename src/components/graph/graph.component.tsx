@@ -71,8 +71,6 @@ function getPointPath(
   } else if (func === "getNotSolutionsPoints") {
     tmpPoints = constraint.getNotSolutionsPoints(max.posX, max.posY);
   }
-  console.log("graph points", tmpPoints);
-
   let tmpP: Point;
   if (tmpPoints.length !== 0) {
     path += "M ";
@@ -96,17 +94,12 @@ function getPointPath(
       } else {
         tmpP = point;
       }
-      console.log("tmpP", tmpP);
-
       path += `${o.x + space * tmpP.x} ${o.y + -1 * space * tmpP.y}`;
       if (index !== tmpPoints.length - 1) {
         path += " L ";
       }
     });
   }
-  console.log("" + constraint.getFuncString() + " psth :" + path);
-  console.log("Max", max);
-
   return path;
 }
 
@@ -118,13 +111,18 @@ export function GraphComponent(props: GraphProps) {
   return (
     <>
       <svg style={{ width: width, height: heigth }}>
-        <rect style={{ fill: "red", width: width, height: heigth }}></rect>
+        <rect
+          key={"svgrect"}
+          style={{ fill: "red", width: width, height: heigth }}
+        ></rect>
         <g>
           <path
+            key={"axeX"}
             className="g_axe"
             d={getAxeXPath(pointSpace, margin, props.max)}
           ></path>
           <path
+            key={"axeY"}
             className="g_axe"
             d={getAxeYPath(pointSpace, margin, props.max)}
           ></path>
@@ -132,6 +130,7 @@ export function GraphComponent(props: GraphProps) {
         <g>
           <g>
             <text
+              key={"axe0"}
               x={getOriginX(pointSpace, margin, props.max)}
               y={getOriginY(pointSpace, margin, props.max)}
               className="g_axes_point"
@@ -142,7 +141,7 @@ export function GraphComponent(props: GraphProps) {
           <g className="g_y_point">
             {numbersArray(1, props.max.posY).map((n, i) => (
               <text
-                key={"y" + n + i}
+                key={"posy" + i.toString()}
                 x={getOriginX(pointSpace, margin, props.max)}
                 y={getOriginY(pointSpace, margin, props.max) - pointSpace * n}
                 className="g_axes_point"
@@ -152,7 +151,7 @@ export function GraphComponent(props: GraphProps) {
             ))}
             {numbersArray(props.max.negY, -1).map((n, i) => (
               <text
-                key={"y" + n + i}
+                key={"negy" + i.toString()}
                 x={getOriginX(pointSpace, margin, props.max)}
                 y={
                   getOriginY(pointSpace, margin, props.max) +
@@ -167,7 +166,7 @@ export function GraphComponent(props: GraphProps) {
           <g className="g_x_point">
             {numbersArray(1, props.max.posX).map((n, i) => (
               <text
-                key={"x" + n + i}
+                key={"posx" + i.toString()}
                 x={getOriginX(pointSpace, margin, props.max) + pointSpace * n}
                 y={getOriginY(pointSpace, margin, props.max)}
                 className="g_axes_point"
@@ -177,7 +176,7 @@ export function GraphComponent(props: GraphProps) {
             ))}
             {numbersArray(props.max.negX, -1).map((n, i) => (
               <text
-                key={"x" + n + i}
+                key={"negx" + i.toString()}
                 x={
                   getOriginX(pointSpace, margin, props.max) +
                   pointSpace * -1 * n
@@ -191,9 +190,9 @@ export function GraphComponent(props: GraphProps) {
           </g>
         </g>
         {props.constraints.map((constraint, id) => (
-          <g>
-            <path
-              key={"f" + id}
+          <g key={"gfs" + id.toString()}>
+            {/* <path
+              key={"func" + id.toString()}
               className="g_fill"
               d={getPointPath(
                 margin,
@@ -203,8 +202,8 @@ export function GraphComponent(props: GraphProps) {
                 "getNotSolutionsPoints"
               )}
               fill={constraint.getColor()}
-            ></path>
-            <path
+            ></path> */}
+            {/* <path
               key={id}
               className="g_function"
               d={getPointPath(
@@ -215,31 +214,9 @@ export function GraphComponent(props: GraphProps) {
                 "getGraphPoints"
               )}
               stroke={constraint.getColor()}
-            ></path>
+            ></path> */}
           </g>
         ))}
-        {/* {<path
-              className='g_function'
-              d={getPointPath(svgHeigth, margin, pointSpace, [
-                  { x: 0, y: 3 },
-                  { x: 3, y: 0 },
-              ])}
-          ></path>} */}
-
-        {
-          //not solution
-          /* <path
-          className='g_fill'
-          d={getPointPath(svgHeigth, margin, pointSpace, [
-              { x: 0, y: 3 },
-              { x: 3, y: 0 },
-              { x: 5, y: 0 },
-              { x: 5, y: 5 },
-              { x: 0, y: 5 },
-              { x: 0, y: 3 },
-          ])}
-      ></path> */
-        }
       </svg>
     </>
   );

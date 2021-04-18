@@ -101,6 +101,8 @@ export class PLPage extends Component<any, PlPageSate> {
         });
       }
     });
+    max.posX += 2;
+    max.posY += 2;
     this.setState({
       constraints: constraints,
       max,
@@ -147,6 +149,7 @@ export class PLPage extends Component<any, PlPageSate> {
       <div>
         <div>
           <VariableComponent
+            key={"vx"}
             varString={this.state.variables.x}
             label={"variable 1"}
             placeholder={"X"}
@@ -155,6 +158,7 @@ export class PLPage extends Component<any, PlPageSate> {
             }}
           />
           <VariableComponent
+            key={"vy"}
             varString={this.state.variables.y}
             label={"variable 2"}
             placeholder={"Y"}
@@ -169,7 +173,7 @@ export class PLPage extends Component<any, PlPageSate> {
               onClick={this.removeConstraint}
               funcString={constraint.getFuncString()}
               id={constraint.getId()}
-              key={constraint.getId()}
+              key={"c" + constraint.getId().toString()}
               onChange={this.constraintChange}
               placeholder={(() => {
                 return (
@@ -189,6 +193,7 @@ export class PLPage extends Component<any, PlPageSate> {
         <div>
           {this.constraintsValidations() && (
             <GraphComponent
+              key={"gc"}
               max={this.state.max}
               constraints={this.state.constraints}
             />

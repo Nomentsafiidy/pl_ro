@@ -65,7 +65,6 @@ export class Constraint {
 
   private setFunctionAffine(reg: RegExp, func: string) {
     let tmp = func.match(reg);
-    console.log(" *** func *** ", tmp);
     if (tmp) {
       let tmpC: number, tmpCY: number, tmpCX: number;
       tmpCX =
@@ -94,7 +93,7 @@ export class Constraint {
         condiOper: tmp[8] as CondiOper,
         c: tmpC,
       };
-      console.log("this.funcAffine", this.funcAffine);
+      // debugger;
     }
   }
 
@@ -107,6 +106,9 @@ export class Constraint {
     let tmpAffin = this.getFuncAffine();
     if (tmpAffin) {
       if (tmpAffin.x.constant === 0 && tmpAffin.y.constant === 0) {
+        // throw new Error(
+        //   " [ Error : Constant null ] all value is solution or not"
+        // );
         console.log(" [ Error : Constant null ] all value is solution or not");
       } else if (tmpAffin.x.constant === 0) {
         points = [
@@ -131,20 +133,39 @@ export class Constraint {
           },
         ];
       } else {
-        console.log("else");
         points.push(this.getPointByX(tmpAffin, Number.NEGATIVE_INFINITY));
         points.push(this.getPointByX(tmpAffin, Number.POSITIVE_INFINITY));
       }
     }
-
-    console.log("points", points);
     return points;
   }
 
   getXYIntersectionPoints(): Point[] {
     let points: Point[] = [];
-    points.push(this.getPointByX(this.getFuncAffine(), 0));
-    points.push(this.getPointByY(this.getFuncAffine(), 0));
+    let tmpAffin = this.getFuncAffine();
+    if (tmpAffin.x.constant === 0 && tmpAffin.y.constant === 0) {
+      // throw new Error(
+      //   " [ Error : Constant null ] all value is solution or not"
+      // );
+      console.log(" [ Error : Constant null ] all value is solution or not");
+    } else if (tmpAffin.x.constant === 0) {
+      points = [
+        {
+          x: 0,
+          y: tmpAffin.c / tmpAffin.y.constant,
+        },
+      ];
+    } else if (tmpAffin.y.constant === 0) {
+      points = [
+        {
+          x: tmpAffin.c / tmpAffin.x.constant,
+          y: 0,
+        },
+      ];
+    } else {
+      points.push(this.getPointByX(this.getFuncAffine(), 0));
+      points.push(this.getPointByY(this.getFuncAffine(), 0));
+    }
     return points;
   }
 
@@ -184,8 +205,6 @@ export class Constraint {
           y: maxY,
         },
       ];
-
-      console.log("three" + 1, possibleSolutions);
     } else if (
       points[0].x >= 0 &&
       points[0].y >= 0 &&
@@ -216,8 +235,6 @@ export class Constraint {
           y: maxY,
         },
       ];
-
-      console.log("three" + 2, possibleSolutions);
     } else if (
       (points[0].x <= 0 || points[0].y <= 0) &&
       points[1].x >= 0 &&
@@ -244,8 +261,6 @@ export class Constraint {
           y: maxY,
         },
       ];
-
-      console.log("three" + 3, possibleSolutions);
     } else {
       possibleSolutions = [
         {
@@ -265,8 +280,6 @@ export class Constraint {
           y: maxY,
         },
       ];
-
-      console.log("three" + 4, possibleSolutions);
     }
     if (this.getFuncAffine()) {
       possibleSolutions.forEach((ps) => {
@@ -275,8 +288,6 @@ export class Constraint {
             notSolution.push(ps);
             break;
           case "<=":
-            console.log("case <= || < ");
-
             if (
               this.calculate(this.getFuncAffine(), ps.x, ps.y) >=
               this.getFuncAffine().c
@@ -285,17 +296,12 @@ export class Constraint {
             }
             break;
           case ">=":
-            console.log("case >= || > ");
             if (
               this.calculate(this.getFuncAffine(), ps.x, ps.y) <=
               this.getFuncAffine().c
             ) {
               notSolution.push(ps);
             }
-            break;
-          default:
-            console.log("default", this.getFuncAffine().condiOper);
-
             break;
         }
       });
@@ -331,7 +337,6 @@ export class Constraint {
       switch (func.arithOper) {
         case "+":
           tmpPoint.x = (func.c + -1 * func.y.constant * y) / func.x.constant;
-          console.log("tmpPoint.y", tmpPoint.y);
           break;
         case "-":
           tmpPoint.y =
