@@ -178,10 +178,7 @@ export function GraphComponent(props: GraphProps) {
             {numbersArray(props.max.negX, -1).map((n, i) => (
               <text
                 key={"negx" + i.toString()}
-                x={
-                  getOriginX(pointSpace, margin, props.max) +
-                  pointSpace * -1 * n
-                }
+                x={getOriginX(pointSpace, margin, props.max) + pointSpace * n}
                 y={getOriginY(pointSpace, margin, props.max)}
                 className="g_axes_point"
               >

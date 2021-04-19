@@ -177,8 +177,6 @@ export class Constraint {
     let possibleSolutions: Point[] = [];
     if (points.length === 1) {
       if (points[0].y >= 0 && points[0].x === 0) {
-        console.log(" **** intersections points *** ", points);
-
         possibleSolutions = [
           {
             x: 0,
@@ -205,12 +203,6 @@ export class Constraint {
           },
         ];
       } else {
-        console.log(" **** intersections points *** ", points);
-        console.log(
-          "*** max x ***",
-          this.getPointByY(this.getFuncAffine(), maxY)
-        );
-        console.log("*** max y ***");
         possibleSolutions = [
           {
             x: 0,
