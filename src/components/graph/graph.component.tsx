@@ -142,8 +142,6 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
 
   let zLine = useRef(null);
 
-  const [solution, setSolutionState] = useState({ cx: -1, cy: -1 });
-
   useImperativeHandle(ref, () => ({
     resolve() {
       let possibleSolution: Point[] = [
@@ -215,12 +213,8 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
         console.log("ref", current);
         // debugger;
         if (current) {
-          setSolutionState({
-            cx: o.x * solution[0].x,
-            cy: o.y * solution[0].y,
-          });
           console.log("set state");
-
+          (current as any).setAttribute("d", "M 50 50 L 100 100");
           // (current as any).setAttribute("x", o.x * solution[0].x);
           // (current as any).setAttribute("y", o.y * solution[0].y);
         }
@@ -334,8 +328,6 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
         ))}
         <g>
           <path
-            dx={solution.cx !== -1 ? solution.cx : undefined}
-            dy={solution.cy !== -1 ? solution.cy : undefined}
             ref={zLine}
             className="g_function"
             d={getZPath(margin, pointSpace, props.max, props.ecoFunc)}
