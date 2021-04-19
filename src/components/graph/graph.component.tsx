@@ -1,4 +1,5 @@
 import { Constraint } from "src/models/constraint";
+import { EconomicFunction } from "src/models/economic_function";
 import { Point } from "src/models/pl.type";
 import "./graph.css";
 type Max = {
@@ -11,6 +12,7 @@ type Max = {
 type GraphProps = {
   max: Max;
   constraints: Constraint[];
+  ecoFunc: EconomicFunction;
   margin?: number;
   pointSpace?: number;
 };
@@ -96,10 +98,33 @@ function getPointPath(
       } else {
         tmpP = point;
       }
-      // console.log("point", tmpP);
-
-      // console.log("max", max);
       path += `${o.x + space * tmpP.x} ${o.y + -1 * space * tmpP.y}`;
+      if (index !== tmpPoints.length - 1) {
+        path += " L ";
+      }
+    });
+  }
+  return path;
+}
+function getZPath(
+  margin: number,
+  space: number,
+  max: Max,
+  z: EconomicFunction
+): string {
+  let path = "";
+  let o = {
+    x: getOriginX(margin, space, max),
+    y: getOriginY(margin, space, max),
+  };
+  let tmpPoints: Point[] = [];
+  tmpPoints = z.getGraphPoints(max);
+  console.log("tmpPoints", tmpPoints);
+
+  if (tmpPoints.length !== 0) {
+    path += "M ";
+    tmpPoints.forEach((point, index) => {
+      path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
       if (index !== tmpPoints.length - 1) {
         path += " L ";
       }
@@ -215,6 +240,13 @@ export function GraphComponent(props: GraphProps) {
             ></path>
           </g>
         ))}
+        <g>
+          <path
+            className="g_function"
+            d={getZPath(margin, pointSpace, props.max, props.ecoFunc)}
+            stroke={props.ecoFunc.getColor()}
+          ></path>
+        </g>
       </svg>
     </>
   );

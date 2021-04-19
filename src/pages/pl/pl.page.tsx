@@ -1,11 +1,12 @@
 import { Component } from "react";
 import { Constraint } from "src/models/constraint";
 //models / type imports
-import { Variables, Point } from "src/models/pl.type";
+import { Variables, Point, Optimize } from "src/models/pl.type";
 //components imports
 import { ConstraintComponent } from "src/components/constraint/constraint.component";
 import { VariableComponent } from "src/components/variable/variable.component";
 import { GraphComponent } from "src/components/graph/graph.component";
+import { EconomicFunction } from "src/models/economic_function";
 
 type PlPageSate = {
   max: {
@@ -16,6 +17,7 @@ type PlPageSate = {
   };
   variables: Variables;
   constraints: Constraint[];
+  ecoFunc: EconomicFunction;
 };
 
 export class PLPage extends Component<any, PlPageSate> {
@@ -33,6 +35,7 @@ export class PLPage extends Component<any, PlPageSate> {
         y: "",
       },
       constraints: [new Constraint(0, "")],
+      ecoFunc: new EconomicFunction(Optimize.MAX, ""),
     };
 
     //function reference
@@ -41,6 +44,7 @@ export class PLPage extends Component<any, PlPageSate> {
     this.constraintChange = this.constraintChange.bind(this);
     this.setConstraintsState = this.setConstraintsState.bind(this);
     this.addNewConstraint = this.addNewConstraint.bind(this);
+    this.setFuncEcoState = this.setFuncEcoState.bind(this);
   }
 
   //logic fonction
@@ -67,7 +71,7 @@ export class PLPage extends Component<any, PlPageSate> {
         [variable]: e.target.value,
       };
       Constraint.setVariables(newVar);
-      // EconomicFunction.setVariables(newVar);
+      EconomicFunction.setVariables(newVar);
       return {
         variables: newVar,
       };
@@ -144,6 +148,20 @@ export class PLPage extends Component<any, PlPageSate> {
     this.setConstraintsState(tmp);
   };
 
+  setFuncEcoState(e: any, attr: string) {
+    this.setState((state, _props) => {
+      let tmpEcoFunc = state.ecoFunc;
+      if (attr === "optimize") {
+        tmpEcoFunc.setOptimize(e.target.value as Optimize);
+      } else if (attr === "func") {
+        tmpEcoFunc.setFuncString(e.target.value);
+      }
+      return {
+        ecoFunc: tmpEcoFunc,
+      };
+    });
+  }
+
   render() {
     return (
       <div>
@@ -191,8 +209,39 @@ export class PLPage extends Component<any, PlPageSate> {
           </div>
         </div>
         <div>
+          {
+            <div>
+              <select
+                value={this.state.ecoFunc.getOptimize()}
+                onChange={(e) => {
+                  this.setFuncEcoState(e, "optimize");
+                }}
+              >
+                <option value="MAX">MAX</option>
+                <option value="MIN">MIN</option>
+              </select>
+              <input
+                value={this.state.ecoFunc.getFuncString()}
+                onChange={(e) => {
+                  this.setFuncEcoState(e, "func");
+                }}
+                type="text"
+                placeholder={(() => {
+                  return (
+                    "(Z) Ex: 2" +
+                    this.state.variables.x +
+                    " + 3" +
+                    this.state.variables.y
+                  );
+                })()}
+              />
+            </div>
+          }
+        </div>
+        <div>
           {this.constraintsValidations() && (
             <GraphComponent
+              ecoFunc={this.state.ecoFunc}
               key={"gc"}
               max={this.state.max}
               constraints={this.state.constraints}

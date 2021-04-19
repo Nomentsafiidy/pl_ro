@@ -19,6 +19,11 @@ export enum CondiOper {
   SUPOREQUAL = ">=",
 }
 
+export enum Optimize {
+  MIN = "MIN",
+  MAX = "MAX",
+}
+
 export type Operand = {
   constant: number;
   parameter: string;

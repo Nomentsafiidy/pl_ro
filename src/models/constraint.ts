@@ -56,7 +56,15 @@ export class Constraint {
   }
 
   public isContrainte = (): boolean => {
-    if (Constraint.funcRegExp && Constraint.funcRegExp.test(this.funcString)) {
+    if (
+      Constraint.variables &&
+      Constraint.variables.x &&
+      Constraint.variables.y &&
+      Constraint.variables.x !== "" &&
+      Constraint.variables.y !== "" &&
+      Constraint.funcRegExp &&
+      Constraint.funcRegExp.test(this.funcString)
+    ) {
       return true;
     } else {
       return false;
@@ -143,8 +151,6 @@ export class Constraint {
   getXYIntersectionPoints(): Point[] {
     let points: Point[] = [];
     let tmpAffin = this.getFuncAffine();
-    console.log("tmp affine", tmpAffin);
-
     if (tmpAffin.x.constant === 0 && tmpAffin.y.constant === 0) {
       // throw new Error(
       //   " [ Error : Constant null ] all value is solution or not"
