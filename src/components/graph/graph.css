@@ -17,4 +17,5 @@
 }
 .g_fill {
   opacity: 0.3;
+  transition: all 1s;
 }

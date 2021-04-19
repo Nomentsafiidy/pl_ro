@@ -189,21 +189,32 @@ export class EconomicFunction {
     return tmpPoint;
   }
 
-  public calculate(x: number, y: number): number {
+  public calculate(func: FunctionAffine, x: number, y: number): number {
     let result: number = 0;
     if (x === Number.POSITIVE_INFINITY && y === Number.NEGATIVE_INFINITY) {
       return Number.POSITIVE_INFINITY;
     } else {
-      switch (this.z.arithOper) {
+      switch (func.arithOper) {
         case "+":
-          result = this.z.x.constant * x + this.z.y.constant * y;
+          result = func.x.constant * x + func.y.constant * y;
           break;
         case "-":
-          result = this.z.x.constant * x + -1 * this.z.y.constant * y;
+          result = func.x.constant * x + -1 * func.y.constant * y;
           break;
       }
     }
     return result;
+  }
+
+  public getSolutionPathPoints(c: number, max: Max): Point[] {
+    let points: Point[] = [];
+    let tmpAffine = this.getZ();
+    tmpAffine.c = c;
+    points = [
+      this.getPointByY(tmpAffine, max.posY),
+      this.getPointByX(tmpAffine, max.posX),
+    ];
+    return points;
   }
 
   getColor(): string {

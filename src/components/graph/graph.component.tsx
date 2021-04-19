@@ -177,10 +177,15 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
       let solution: Point[] = [];
       if (possibleSolution.length !== 0) {
         possibleSolution.forEach((point) => {
-          if (props.ecoFunc.calculate(point.x, point.y) > c) {
-            c = props.ecoFunc.calculate(point.x, point.y);
+          if (
+            props.ecoFunc.calculate(props.ecoFunc.getZ(), point.x, point.y) > c
+          ) {
+            c = props.ecoFunc.calculate(props.ecoFunc.getZ(), point.x, point.y);
             solution = [point];
-          } else if (props.ecoFunc.calculate(point.x, point.y) === c) {
+          } else if (
+            props.ecoFunc.calculate(props.ecoFunc.getZ(), point.x, point.y) ===
+            c
+          ) {
             solution.push(point);
           }
         });
@@ -192,32 +197,25 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
         alert("Pusieur solution");
       } else {
         //get path
-        // let path = "";
+        let path = "";
         let o = {
           x: getOriginX(margin, pointSpace, props.max),
           y: getOriginY(margin, pointSpace, props.max),
         };
-        // let tmpPoints: Point[] = [];
-        // tmpPoints = z.getGraphPoints(max);
-        // if (tmpPoints.length !== 0) {
-        //   path += "M ";
-        //   tmpPoints.forEach((point, index) => {
-        //     path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
-        //     if (index !== tmpPoints.length - 1) {
-        //       path += " L ";
-        //     }
-        //   });
-        // }
-        let current = zLine.current;
-
-        console.log("ref", current);
-        // debugger;
-        if (current) {
-          console.log("set state");
-          (current as any).setAttribute("d", "M 50 50 L 100 100");
-          // (current as any).setAttribute("x", o.x * solution[0].x);
-          // (current as any).setAttribute("y", o.y * solution[0].y);
+        let tmpPoints: Point[] = [];
+        tmpPoints = props.ecoFunc.getSolutionPathPoints(c, props.max);
+        if (tmpPoints.length !== 0) {
+          path += "M ";
+          tmpPoints.forEach((point, index) => {
+            path += `${o.x + pointSpace * point.x} ${
+              o.y + -1 * pointSpace * point.y
+            }`;
+            if (index !== tmpPoints.length - 1) {
+              path += " L ";
+            }
+          });
         }
+        (zLine.current as any).setAttribute("d", path);
       }
       console.log("solution", solution);
       console.log("ref", zLine);
