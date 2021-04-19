@@ -434,4 +434,42 @@ export class Constraint {
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
     return "#" + randomColor;
   };
+
+  getPossibleSolution(possibleSolutions: Point[]): Point[] {
+    let tmpSolution: Point[] = [];
+    let AllPossibleSolutions = possibleSolutions.concat(
+      this.getXYIntersectionPoints()
+    );
+    if (this.getFuncAffine()) {
+      AllPossibleSolutions.forEach((ps) => {
+        switch (this.getFuncAffine().condiOper) {
+          case "=":
+            if (
+              this.calculate(this.getFuncAffine(), ps.x, ps.y) ===
+              this.getFuncAffine().c
+            ) {
+              tmpSolution.push(ps);
+            }
+            break;
+          case "<=":
+            if (
+              this.calculate(this.getFuncAffine(), ps.x, ps.y) <=
+              this.getFuncAffine().c
+            ) {
+              tmpSolution.push(ps);
+            }
+            break;
+          case ">=":
+            if (
+              this.calculate(this.getFuncAffine(), ps.x, ps.y) >=
+              this.getFuncAffine().c
+            ) {
+              tmpSolution.push(ps);
+            }
+            break;
+        }
+      });
+    }
+    return tmpSolution;
+  }
 }

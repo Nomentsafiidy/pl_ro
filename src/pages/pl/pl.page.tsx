@@ -21,6 +21,8 @@ type PlPageSate = {
 };
 
 export class PLPage extends Component<any, PlPageSate> {
+  public graphRef: any;
+
   constructor(props: any) {
     super(props);
     this.state = {
@@ -38,6 +40,9 @@ export class PLPage extends Component<any, PlPageSate> {
       ecoFunc: new EconomicFunction(Optimize.MAX, ""),
     };
 
+    //ref
+    this.graphRef = null;
+
     //function reference
     this.handleVarChange = this.handleVarChange.bind(this);
     this.removeConstraint = this.removeConstraint.bind(this);
@@ -45,6 +50,7 @@ export class PLPage extends Component<any, PlPageSate> {
     this.setConstraintsState = this.setConstraintsState.bind(this);
     this.addNewConstraint = this.addNewConstraint.bind(this);
     this.setFuncEcoState = this.setFuncEcoState.bind(this);
+    this.resolve = this.resolve.bind(this);
   }
 
   //logic fonction
@@ -204,6 +210,10 @@ export class PLPage extends Component<any, PlPageSate> {
     });
   }
 
+  resolve() {
+    this.graphRef.resolve();
+  }
+
   render() {
     return (
       <div>
@@ -281,8 +291,15 @@ export class PLPage extends Component<any, PlPageSate> {
           }
         </div>
         <div>
+          {this.constraintsValidations() &&
+            this.state.ecoFunc.isContrainte() && (
+              <button onClick={this.resolve}>Resoudre</button>
+            )}
+        </div>
+        <div>
           {this.constraintsValidations() && (
             <GraphComponent
+              ref={(ref) => (this.graphRef = ref)}
               ecoFunc={this.state.ecoFunc}
               key={"gc"}
               max={this.state.max}

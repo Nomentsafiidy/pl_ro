@@ -1,3 +1,5 @@
+import { render } from "@testing-library/react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Constraint } from "src/models/constraint";
 import { EconomicFunction } from "src/models/economic_function";
 import { Point } from "src/models/pl.type";
@@ -15,6 +17,7 @@ type GraphProps = {
   ecoFunc: EconomicFunction;
   margin?: number;
   pointSpace?: number;
+  ref: any;
 };
 
 function calculateWidth(space: number, margin: number, max: Max) {
@@ -131,11 +134,102 @@ function getZPath(
   return path;
 }
 
-export function GraphComponent(props: GraphProps) {
+export const GraphComponent = forwardRef((props: GraphProps, ref) => {
   let margin = props.margin ? props.margin : 50;
   let pointSpace = props.pointSpace ? props.pointSpace : 50;
   let width: number = calculateWidth(pointSpace, margin, props.max);
   let heigth: number = calculateHeigth(pointSpace, margin, props.max);
+
+  let zLine = useRef(null);
+
+  const [solution, setSolutionState] = useState({ cx: -1, cy: -1 });
+
+  useImperativeHandle(ref, () => ({
+    resolve() {
+      let possibleSolution: Point[] = [
+        {
+          x: 0,
+          y: 0,
+        },
+        {
+          x: 0,
+          y: Number.POSITIVE_INFINITY,
+        },
+        {
+          x: Number.POSITIVE_INFINITY,
+          y: 0,
+        },
+        {
+          x: Number.POSITIVE_INFINITY,
+          y: Number.POSITIVE_INFINITY,
+        },
+      ];
+      props.constraints.forEach((constraint) => {
+        if (constraint.isContrainte()) {
+          possibleSolution = constraint.getPossibleSolution(possibleSolution);
+        }
+      });
+      // props.constraints.forEach((constraint) => {
+      //   if (constraint.isContrainte()) {
+      //     possibleSolution = constraint.getPossibleSolution(possibleSolution);
+      //   }
+      // });
+      console.log("possibleSolution", possibleSolution);
+      let c: number = 0;
+      let solution: Point[] = [];
+      if (possibleSolution.length !== 0) {
+        possibleSolution.forEach((point) => {
+          if (props.ecoFunc.calculate(point.x, point.y) > c) {
+            c = props.ecoFunc.calculate(point.x, point.y);
+            solution = [point];
+          } else if (props.ecoFunc.calculate(point.x, point.y) === c) {
+            solution.push(point);
+          }
+        });
+      } else {
+        alert("Pas de solution");
+      }
+      //many solution
+      if (solution.length > 1) {
+        alert("Pusieur solution");
+      } else {
+        //get path
+        // let path = "";
+        let o = {
+          x: getOriginX(margin, pointSpace, props.max),
+          y: getOriginY(margin, pointSpace, props.max),
+        };
+        // let tmpPoints: Point[] = [];
+        // tmpPoints = z.getGraphPoints(max);
+        // if (tmpPoints.length !== 0) {
+        //   path += "M ";
+        //   tmpPoints.forEach((point, index) => {
+        //     path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
+        //     if (index !== tmpPoints.length - 1) {
+        //       path += " L ";
+        //     }
+        //   });
+        // }
+        let current = zLine.current;
+
+        console.log("ref", current);
+        // debugger;
+        if (current) {
+          setSolutionState({
+            cx: o.x * solution[0].x,
+            cy: o.y * solution[0].y,
+          });
+          console.log("set state");
+
+          // (current as any).setAttribute("x", o.x * solution[0].x);
+          // (current as any).setAttribute("y", o.y * solution[0].y);
+        }
+      }
+      console.log("solution", solution);
+      console.log("ref", zLine);
+    },
+  }));
+
   return (
     <>
       <svg style={{ width: width, height: heigth }}>
@@ -240,6 +334,9 @@ export function GraphComponent(props: GraphProps) {
         ))}
         <g>
           <path
+            dx={solution.cx !== -1 ? solution.cx : undefined}
+            dy={solution.cy !== -1 ? solution.cy : undefined}
+            ref={zLine}
             className="g_function"
             d={getZPath(margin, pointSpace, props.max, props.ecoFunc)}
             stroke={props.ecoFunc.getColor()}
@@ -248,4 +345,4 @@ export function GraphComponent(props: GraphProps) {
       </svg>
     </>
   );
-}
+});

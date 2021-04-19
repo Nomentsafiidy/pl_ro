@@ -189,6 +189,23 @@ export class EconomicFunction {
     return tmpPoint;
   }
 
+  public calculate(x: number, y: number): number {
+    let result: number = 0;
+    if (x === Number.POSITIVE_INFINITY && y === Number.NEGATIVE_INFINITY) {
+      return Number.POSITIVE_INFINITY;
+    } else {
+      switch (this.z.arithOper) {
+        case "+":
+          result = this.z.x.constant * x + this.z.y.constant * y;
+          break;
+        case "-":
+          result = this.z.x.constant * x + -1 * this.z.y.constant * y;
+          break;
+      }
+    }
+    return result;
+  }
+
   getColor(): string {
     return this.color;
   }
