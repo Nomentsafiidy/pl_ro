@@ -143,6 +143,8 @@ export class Constraint {
   getXYIntersectionPoints(): Point[] {
     let points: Point[] = [];
     let tmpAffin = this.getFuncAffine();
+    console.log("tmp affine", tmpAffin);
+
     if (tmpAffin.x.constant === 0 && tmpAffin.y.constant === 0) {
       // throw new Error(
       //   " [ Error : Constant null ] all value is solution or not"
@@ -173,114 +175,180 @@ export class Constraint {
     let notSolution: Point[] = [];
     let points: Point[] = this.getXYIntersectionPoints();
     let possibleSolutions: Point[] = [];
-    if (
-      points[0].x >= 0 &&
-      points[0].y >= 0 &&
-      points[1].x >= 0 &&
-      points[1].y >= 0
-    ) {
-      possibleSolutions = [
-        {
-          x: 0,
-          y: maxY,
-        },
-        {
-          x: points[0].x,
-          y: points[0].y,
-        },
-        {
-          x: 0,
-          y: 0,
-        },
-        {
-          x: points[1].x,
-          y: points[1].y,
-        },
-        {
-          x: maxX,
-          y: 0,
-        },
-        {
-          x: maxX,
-          y: maxY,
-        },
-      ];
-    } else if (
-      points[0].x >= 0 &&
-      points[0].y >= 0 &&
-      (points[1].x <= 0 || points[1].y <= 0)
-    ) {
-      possibleSolutions = [
-        {
-          x: 0,
-          y: maxY,
-        },
-        {
-          x: points[0].x,
-          y: points[0].y,
-        },
-        {
-          x: 0,
-          y: 0,
-        },
-        {
-          ...this.getPointByY(this.funcAffine, maxY),
-        },
-        {
-          x: maxX,
-          y: 0,
-        },
-        {
-          x: maxX,
-          y: maxY,
-        },
-      ];
-    } else if (
-      (points[0].x <= 0 || points[0].y <= 0) &&
-      points[1].x >= 0 &&
-      points[1].y >= 0
-    ) {
-      possibleSolutions = [
-        {
-          x: 0,
-          y: maxY,
-        },
-        {
-          x: 0,
-          y: 0,
-        },
-        {
-          ...this.getPointByY(this.funcAffine, 0),
-        },
-        {
-          x: maxX,
-          y: 0,
-        },
-        {
-          x: maxX,
-          y: maxY,
-        },
-      ];
-    } else {
-      possibleSolutions = [
-        {
-          x: 0,
-          y: maxY,
-        },
-        {
-          x: 0,
-          y: 0,
-        },
-        {
-          x: maxX,
-          y: 0,
-        },
-        {
-          x: maxX,
-          y: maxY,
-        },
-      ];
+    if (points.length === 1) {
+      if (points[0].y >= 0 && points[0].x === 0) {
+        console.log(" **** intersections points *** ", points);
+
+        possibleSolutions = [
+          {
+            x: 0,
+            y: maxY,
+          },
+          {
+            x: points[0].x,
+            y: points[0].y,
+          },
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: maxX,
+            y: 0,
+          },
+          {
+            ...this.getPointByX(this.getFuncAffine(), maxX),
+          },
+          {
+            x: maxX,
+            y: maxY,
+          },
+        ];
+      } else {
+        console.log(" **** intersections points *** ", points);
+        console.log(
+          "*** max x ***",
+          this.getPointByY(this.getFuncAffine(), maxY)
+        );
+        console.log("*** max y ***");
+        possibleSolutions = [
+          {
+            x: 0,
+            y: maxY,
+          },
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: points[0].x,
+            y: points[0].y,
+          },
+          {
+            x: maxX,
+            y: 0,
+          },
+          {
+            x: maxX,
+            y: maxY,
+          },
+          {
+            ...this.getPointByY(this.getFuncAffine(), maxY),
+          },
+        ];
+      }
+    } else if (points.length > 1) {
+      if (
+        points &&
+        points[0].x >= 0 &&
+        points[0].y >= 0 &&
+        points[1].x >= 0 &&
+        points[1].y >= 0
+      ) {
+        possibleSolutions = [
+          {
+            x: 0,
+            y: maxY,
+          },
+          {
+            x: points[0].x,
+            y: points[0].y,
+          },
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: points[1].x,
+            y: points[1].y,
+          },
+          {
+            x: maxX,
+            y: 0,
+          },
+          {
+            x: maxX,
+            y: maxY,
+          },
+        ];
+      } else if (
+        points[0].x >= 0 &&
+        points[0].y >= 0 &&
+        (points[1].x <= 0 || points[1].y <= 0)
+      ) {
+        possibleSolutions = [
+          {
+            x: 0,
+            y: maxY,
+          },
+          {
+            x: points[0].x,
+            y: points[0].y,
+          },
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            ...this.getPointByY(this.funcAffine, maxY),
+          },
+          {
+            x: maxX,
+            y: 0,
+          },
+          {
+            x: maxX,
+            y: maxY,
+          },
+        ];
+      } else if (
+        (points[0].x <= 0 || points[0].y <= 0) &&
+        points[1].x >= 0 &&
+        points[1].y >= 0
+      ) {
+        possibleSolutions = [
+          {
+            x: 0,
+            y: maxY,
+          },
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            ...this.getPointByY(this.funcAffine, 0),
+          },
+          {
+            x: maxX,
+            y: 0,
+          },
+          {
+            x: maxX,
+            y: maxY,
+          },
+        ];
+      } else {
+        possibleSolutions = [
+          {
+            x: 0,
+            y: maxY,
+          },
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: maxX,
+            y: 0,
+          },
+          {
+            x: maxX,
+            y: maxY,
+          },
+        ];
+      }
     }
+
     if (this.getFuncAffine()) {
       possibleSolutions.forEach((ps) => {
         switch (this.getFuncAffine().condiOper) {

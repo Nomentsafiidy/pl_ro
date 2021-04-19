@@ -75,6 +75,8 @@ function getPointPath(
   if (tmpPoints.length !== 0) {
     path += "M ";
     tmpPoints.forEach((point, index) => {
+      // console.log("true point", point);
+
       if (
         point.y === Number.NEGATIVE_INFINITY ||
         point.y === Number.POSITIVE_INFINITY
@@ -94,6 +96,9 @@ function getPointPath(
       } else {
         tmpP = point;
       }
+      // console.log("point", tmpP);
+
+      // console.log("max", max);
       path += `${o.x + space * tmpP.x} ${o.y + -1 * space * tmpP.y}`;
       if (index !== tmpPoints.length - 1) {
         path += " L ";
@@ -111,10 +116,6 @@ export function GraphComponent(props: GraphProps) {
   return (
     <>
       <svg style={{ width: width, height: heigth }}>
-        <rect
-          key={"svgrect"}
-          style={{ fill: "red", width: width, height: heigth }}
-        ></rect>
         <g>
           <path
             key={"axeX"}
@@ -191,7 +192,7 @@ export function GraphComponent(props: GraphProps) {
         </g>
         {props.constraints.map((constraint, id) => (
           <g key={"gfs" + id.toString()}>
-            {/* <path
+            <path
               key={"func" + id.toString()}
               className="g_fill"
               d={getPointPath(
@@ -202,9 +203,9 @@ export function GraphComponent(props: GraphProps) {
                 "getNotSolutionsPoints"
               )}
               fill={constraint.getColor()}
-            ></path> */}
-            {/* <path
-              key={id}
+            ></path>
+            <path
+              key={"fl" + id.toString()}
               className="g_function"
               d={getPointPath(
                 margin,
@@ -214,7 +215,7 @@ export function GraphComponent(props: GraphProps) {
                 "getGraphPoints"
               )}
               stroke={constraint.getColor()}
-            ></path> */}
+            ></path>
           </g>
         ))}
       </svg>
