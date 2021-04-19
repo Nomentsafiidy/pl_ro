@@ -119,8 +119,6 @@ function getZPath(
   };
   let tmpPoints: Point[] = [];
   tmpPoints = z.getGraphPoints(max);
-  console.log("tmpPoints", tmpPoints);
-
   if (tmpPoints.length !== 0) {
     path += "M ";
     tmpPoints.forEach((point, index) => {

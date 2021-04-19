@@ -103,6 +103,23 @@ export class PLPage extends Component<any, PlPageSate> {
             max.negY = point.y;
           }
         });
+        if (this.state.ecoFunc.isContrainte()) {
+          let points = this.state.ecoFunc.getGraphPoints(max);
+          points.forEach((point) => {
+            if (point.x > max.posX) {
+              max.posX = point.x;
+            }
+            if (point.y > max.posY) {
+              max.posY = point.y;
+            }
+            if (point.x < max.negX) {
+              max.negX = point.x;
+            }
+            if (point.y < max.negY) {
+              max.negY = point.y;
+            }
+          });
+        }
       }
     });
     max.posX += 2;
@@ -151,13 +168,38 @@ export class PLPage extends Component<any, PlPageSate> {
   setFuncEcoState(e: any, attr: string) {
     this.setState((state, _props) => {
       let tmpEcoFunc = state.ecoFunc;
+      let max = {
+        posX: 0,
+        posY: 0,
+        negX: 0,
+        negY: 0,
+      };
+      max = state.max;
       if (attr === "optimize") {
         tmpEcoFunc.setOptimize(e.target.value as Optimize);
       } else if (attr === "func") {
         tmpEcoFunc.setFuncString(e.target.value);
+        if (tmpEcoFunc.isContrainte()) {
+          let points = tmpEcoFunc.getGraphPoints(state.max);
+          points.forEach((point) => {
+            if (point.x > max.posX) {
+              max.posX = point.x;
+            }
+            if (point.y > max.posY) {
+              max.posY = point.y;
+            }
+            if (point.x < max.negX) {
+              max.negX = point.x;
+            }
+            if (point.y < max.negY) {
+              max.negY = point.y;
+            }
+          });
+        }
       }
       return {
         ecoFunc: tmpEcoFunc,
+        max: max,
       };
     });
   }

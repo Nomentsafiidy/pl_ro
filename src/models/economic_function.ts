@@ -113,8 +113,6 @@ export class EconomicFunction {
   getGraphPoints(max: Max): Point[] {
     let points: Point[] = [];
     let tmpAffin = this.getZ();
-    console.log("z", this.getZ());
-    console.log("max", max);
     if (tmpAffin) {
       if (tmpAffin.x.constant === 0 && tmpAffin.y.constant === 0) {
         // throw new Error(
