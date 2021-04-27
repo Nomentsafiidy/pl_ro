@@ -286,7 +286,7 @@ export class PLPage extends Component<any, PlPageSate> {
                         />
                     ))}
                     <div onClick={this.addNewConstraint}>
-                        <button>add</button>
+                        <button className='btn'>add</button>
                     </div>
                 </div>
                 <div>
