@@ -9,6 +9,7 @@ type ResolveRes = {
     path?: string;
     success: boolean;
     message?: string;
+    solution?: Point[];
 };
 type Max = {
     posX: number;
@@ -106,12 +107,9 @@ function getZPath(margin: number, space: number, max: Max, z: EconomicFunction):
         let tmpPoints: Point[] = [];
         if (z.getOptimize() === Optimize.MIN) {
             z.setC(z.calculate(z.getZ(), max.posX - 1, max.posY - 1));
-            console.log('min z', z.getZ());
         } else {
             z.setC(0);
         }
-        console.log('zzz', z.getZ());
-
         tmpPoints = z.getGraphPoints(max);
         if (tmpPoints.length !== 0) {
             path += 'M ';
@@ -173,7 +171,9 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
     //many solution
     if (solution.length > 1) {
         resolveRes.message = 'Plusieur Solution possible';
+        resolveRes.solution = solution;
     } else {
+        resolveRes.solution = solution;
         let o = {
             x: getOriginX(margin, space, max),
             y: getOriginY(margin, space, max),
@@ -195,11 +195,72 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
 }
 
 function resolveMin(constraints: Constraint[], ecoFunc: EconomicFunction, margin: number, space: number, max: Max): ResolveRes {
-    console.log('resolveMin');
     let resolveRes: ResolveRes = {
         path: '',
         success: false,
     };
+
+    let possibleSolution: Point[] = [
+        {
+            x: 0,
+            y: 0,
+        },
+        {
+            x: 0,
+            y: Number.POSITIVE_INFINITY,
+        },
+        {
+            x: Number.POSITIVE_INFINITY,
+            y: 0,
+        },
+        {
+            x: Number.POSITIVE_INFINITY,
+            y: Number.POSITIVE_INFINITY,
+        },
+    ];
+    constraints.forEach((constraint) => {
+        if (constraint.isContrainte()) {
+            possibleSolution = constraint.getPossibleSolution(possibleSolution);
+        }
+    });
+    let c: number = ecoFunc.calculate(ecoFunc.getZ(), max.posX, max.posY);
+    let solution: Point[] = [];
+    if (possibleSolution.length !== 0) {
+        possibleSolution.forEach((point) => {
+            if (ecoFunc.calculate(ecoFunc.getZ(), point.x, point.y) < c && ecoFunc.calculate(ecoFunc.getZ(), point.x, point.y) >= 0) {
+                c = ecoFunc.calculate(ecoFunc.getZ(), point.x, point.y);
+                solution = [point];
+            } else if (ecoFunc.calculate(ecoFunc.getZ(), point.x, point.y) === c && ecoFunc.calculate(ecoFunc.getZ(), point.x, point.y) >= 0) {
+                solution.push(point);
+            }
+        });
+    } else {
+        //to redifined
+        resolveRes.message = 'Pas de Solution';
+    }
+    //many solution
+    if (solution.length > 1) {
+        resolveRes.message = 'Plusieur Solution possible';
+        resolveRes.solution = solution;
+    } else {
+        resolveRes.solution = solution;
+        let o = {
+            x: getOriginX(margin, space, max),
+            y: getOriginY(margin, space, max),
+        };
+        let tmpPoints: Point[] = [];
+        tmpPoints = ecoFunc.getSolutionPathPoints(c, max);
+        if (tmpPoints.length !== 0) {
+            resolveRes.path += 'M ';
+            tmpPoints.forEach((point, index) => {
+                resolveRes.path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
+                if (index !== tmpPoints.length - 1) {
+                    resolveRes.path += ' L ';
+                }
+            });
+            resolveRes.success = true;
+        }
+    }
     return resolveRes;
 }
 
