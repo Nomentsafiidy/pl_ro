@@ -102,16 +102,26 @@ function getZPath(margin: number, space: number, max: Max, z: EconomicFunction):
         x: getOriginX(margin, space, max),
         y: getOriginY(margin, space, max),
     };
-    let tmpPoints: Point[] = [];
-    tmpPoints = z.getGraphPoints(max);
-    if (tmpPoints.length !== 0) {
-        path += 'M ';
-        tmpPoints.forEach((point, index) => {
-            path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
-            if (index !== tmpPoints.length - 1) {
-                path += ' L ';
-            }
-        });
+    if (z.isContrainte()) {
+        let tmpPoints: Point[] = [];
+        if (z.getOptimize() === Optimize.MIN) {
+            z.setC(z.calculate(z.getZ(), max.posX - 1, max.posY - 1));
+            console.log('min z', z.getZ());
+        } else {
+            z.setC(0);
+        }
+        console.log('zzz', z.getZ());
+
+        tmpPoints = z.getGraphPoints(max);
+        if (tmpPoints.length !== 0) {
+            path += 'M ';
+            tmpPoints.forEach((point, index) => {
+                path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
+                if (index !== tmpPoints.length - 1) {
+                    path += ' L ';
+                }
+            });
+        }
     }
     return path;
 }
@@ -184,8 +194,13 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
     return resolveRes;
 }
 
-function resolveMin() {
+function resolveMin(constraints: Constraint[], ecoFunc: EconomicFunction, margin: number, space: number, max: Max): ResolveRes {
     console.log('resolveMin');
+    let resolveRes: ResolveRes = {
+        path: '',
+        success: false,
+    };
+    return resolveRes;
 }
 
 export const GraphComponent = forwardRef((props: GraphProps, ref) => {
@@ -202,7 +217,12 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
                 success: false,
             };
             if (props.ecoFunc.getOptimize() === Optimize.MIN) {
-                resolveMin();
+                res = resolveMin(props.constraints, props.ecoFunc, margin, pointSpace, props.max);
+                if (res.success) {
+                    (zLine.current as any).setAttribute('d', res.path);
+                } else {
+                    props.onAlert(<div>{res.message}</div>);
+                }
             } else {
                 res = resolveMax(props.constraints, props.ecoFunc, margin, pointSpace, props.max);
                 if (res.success) {
