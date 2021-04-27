@@ -1,15 +1,23 @@
 import { render } from '@testing-library/react';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Constraint } from 'src/models/constraint';
 import { EconomicFunction } from 'src/models/economic_function';
 import { Optimize, Point } from 'src/models/pl.type';
 import './graph.css';
+
+type ResolveRes = {
+    path?: string;
+    success: boolean;
+    message?: string;
+};
 type Max = {
     posX: number;
     posY: number;
     negX: number;
     negY: number;
 };
+
+export type GarphOnAlert = (body: React.ReactNode) => void;
 
 type GraphProps = {
     max: Max;
@@ -18,6 +26,7 @@ type GraphProps = {
     margin?: number;
     pointSpace?: number;
     ref: any;
+    onAlert: GarphOnAlert;
 };
 
 function calculateWidth(space: number, margin: number, max: Max) {
@@ -107,8 +116,11 @@ function getZPath(margin: number, space: number, max: Max, z: EconomicFunction):
     return path;
 }
 
-function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin: number, space: number, max: Max): string {
-    let path = '';
+function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin: number, space: number, max: Max): ResolveRes {
+    let resolveRes: ResolveRes = {
+        path: '',
+        success: false,
+    };
     let possibleSolution: Point[] = [
         {
             x: 0,
@@ -146,11 +158,11 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
         });
     } else {
         //to redifined
-        alert('Pas de solution');
+        resolveRes.message = 'Pas de Solution';
     }
     //many solution
     if (solution.length > 1) {
-        alert('Pusieur solution');
+        resolveRes.message = 'Plusieur Solution possible';
     } else {
         let o = {
             x: getOriginX(margin, space, max),
@@ -159,16 +171,17 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
         let tmpPoints: Point[] = [];
         tmpPoints = ecoFunc.getSolutionPathPoints(c, max);
         if (tmpPoints.length !== 0) {
-            path += 'M ';
+            resolveRes.path += 'M ';
             tmpPoints.forEach((point, index) => {
-                path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
+                resolveRes.path += `${o.x + space * point.x} ${o.y + -1 * space * point.y}`;
                 if (index !== tmpPoints.length - 1) {
-                    path += ' L ';
+                    resolveRes.path += ' L ';
                 }
             });
+            resolveRes.success = true;
         }
     }
-    return path;
+    return resolveRes;
 }
 
 function resolveMin() {
@@ -185,12 +198,18 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
 
     useImperativeHandle(ref, () => ({
         resolve() {
+            let res: ResolveRes = {
+                success: false,
+            };
             if (props.ecoFunc.getOptimize() === Optimize.MIN) {
                 resolveMin();
             } else {
-                let path = resolveMax(props.constraints, props.ecoFunc, margin, pointSpace, props.max);
-
-                (zLine.current as any).setAttribute('d', path);
+                res = resolveMax(props.constraints, props.ecoFunc, margin, pointSpace, props.max);
+                if (res.success) {
+                    (zLine.current as any).setAttribute('d', res.path);
+                } else {
+                    props.onAlert(<div>{res.message}</div>);
+                }
             }
         },
     }));

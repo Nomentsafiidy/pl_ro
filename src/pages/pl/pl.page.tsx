@@ -317,7 +317,14 @@ export class PLPage extends Component<any, PlPageSate> {
                 <div>{this.constraintsValidations() && this.state.ecoFunc.isContrainte() && <button onClick={this.resolve}>Resoudre</button>}</div>
                 <div>
                     {this.constraintsValidations() && (
-                        <GraphComponent ref={(ref) => (this.graphRef = ref)} ecoFunc={this.state.ecoFunc} key={'gc'} max={this.state.max} constraints={this.state.constraints} />
+                        <GraphComponent
+                            onAlert={this.showModal}
+                            ref={(ref) => (this.graphRef = ref)}
+                            ecoFunc={this.state.ecoFunc}
+                            key={'gc'}
+                            max={this.state.max}
+                            constraints={this.state.constraints}
+                        />
                     )}
                 </div>
             </div>
