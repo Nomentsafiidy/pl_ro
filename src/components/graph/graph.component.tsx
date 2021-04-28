@@ -149,6 +149,15 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
             y: Number.POSITIVE_INFINITY,
         },
     ];
+    constraints.forEach((constraint) => {
+        if (constraint.isContrainte()) {
+            constraints.forEach((c2) => {
+                if (constraint.getIntersectionWith(c2)) {
+                    possibleSolution.push(constraint.getIntersectionWith(c2) as Point);
+                }
+            });
+        }
+    });
     constraints.forEach((constraint, i) => {
         if (constraint.isContrainte()) {
             possibleSolution = constraint.getPossibleSolution(possibleSolution);
@@ -225,6 +234,15 @@ function resolveMin(constraints: Constraint[], ecoFunc: EconomicFunction, margin
             y: Number.POSITIVE_INFINITY,
         },
     ];
+    constraints.forEach((constraint) => {
+        if (constraint.isContrainte()) {
+            constraints.forEach((c2) => {
+                if (constraint.getIntersectionWith(c2)) {
+                    possibleSolution.push(constraint.getIntersectionWith(c2) as Point);
+                }
+            });
+        }
+    });
     constraints.forEach((constraint, i) => {
         if (constraint.isContrainte()) {
             possibleSolution = constraint.getPossibleSolution(possibleSolution);

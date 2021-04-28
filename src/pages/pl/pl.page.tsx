@@ -142,6 +142,14 @@ export class PLPage extends Component<any, PlPageSate> {
         constraints.forEach((constraint) => {
             if (constraint.isContrainte()) {
                 points = constraint.getXYIntersectionPoints();
+                constraints.forEach((c2) => {
+                    console.log('intersection f1 : ' + constraint.getFuncString() + 'f2 : ' + c2.getFuncString());
+                    console.log('***intersection**', constraint.getIntersectionWith(c2));
+
+                    if (c2.isContrainte() && constraint.getIntersectionWith(c2)) {
+                        points.push(constraint.getIntersectionWith(c2) as Point);
+                    }
+                });
                 points.forEach((point) => {
                     if (point.x > max.posX) {
                         max.posX = point.x;

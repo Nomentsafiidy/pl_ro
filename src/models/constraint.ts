@@ -466,4 +466,36 @@ export class Constraint {
         }
         return tmpSolution;
     }
+
+    getIntersectionWith(c2: Constraint): Point | null {
+        if (c2.isContrainte() && this.isContrainte()) {
+            let point: Point = {
+                x: 0,
+                y: 0,
+            };
+            let f1 = this.getFuncAffine();
+            let f2 = c2.getFuncAffine();
+            let numY = f2.c * f1.x.constant - f2.x.constant * f1.c;
+            console.log('numY', numY);
+
+            let denY = -1 * f2.x.constant * f1.y.constant + f1.x.constant * f2.y.constant;
+            console.log('denY', denY);
+            if ((numY === 0 && denY === 0) || denY === 0) {
+                return null;
+            } else {
+                point.y = numY / denY;
+                let numX = f1.c - f1.y.constant * point.y;
+                console.log('numX', numX);
+                let denX = f1.x.constant;
+                console.log('denX', denX);
+                if ((numX === 0 && denX === 0) || denX === 0) {
+                    return null;
+                } else {
+                    point.x = numX / denX;
+                    return point;
+                }
+            }
+        }
+        return null;
+    }
 }
