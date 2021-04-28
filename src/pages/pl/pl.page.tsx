@@ -24,6 +24,10 @@ type PlPageSate = {
         hidden: boolean;
         content: React.ReactNode;
     };
+    solutions: {
+        hidden: boolean;
+        value: Point[];
+    };
 };
 
 export class PLPage extends Component<any, PlPageSate> {
@@ -48,6 +52,10 @@ export class PLPage extends Component<any, PlPageSate> {
             },
             constraints: [new Constraint(0, '')],
             ecoFunc: new EconomicFunction(Optimize.MAX, ''),
+            solutions: {
+                hidden: true,
+                value: [],
+            },
         };
 
         //ref
@@ -243,6 +251,27 @@ export class PLPage extends Component<any, PlPageSate> {
         });
     }
 
+    hiddeSolution() {
+        this.setState((state, _props) => {
+            let tmpS = state.solutions;
+            return {
+                solutions: {
+                    value: tmpS.value,
+                    hidden: true,
+                },
+            };
+        });
+    }
+
+    setSolutionState(solutions: Point[]) {
+        this.setState({
+            solutions: {
+                hidden: false,
+                value: solutions,
+            },
+        });
+    }
+
     resolve() {
         this.graphRef.resolve();
     }
@@ -342,6 +371,26 @@ export class PLPage extends Component<any, PlPageSate> {
                                 </button>
                             )}
                         </div>
+                        {!this.state.solutions.hidden && (
+                            <div className='pl_item'>
+                                <div className='pl_subtitle'>Solution</div>
+                                <div className='pl_solutions'>
+                                    {this.state.solutions.value.map((s, si) => {
+                                        <div key={'s' + si.toString()} className='pl_solution_item'>
+                                            <div className='pl_el'>{'S ' + (si + 1).toString() + ' : '}</div>
+                                            <div className='pl_points pl_el'>
+                                                <div className='p_label'>X: </div>
+                                                <div className='p_label'>{s.x}</div>
+                                            </div>
+                                            <div className='pl_points pl_el'>
+                                                <div className='p_label'>y: </div>
+                                                <div className='p_label'>{s.y}</div>
+                                            </div>
+                                        </div>;
+                                    })}
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div className='graph_container'>
                         {this.constraintsValidations() && (

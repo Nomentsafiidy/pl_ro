@@ -264,6 +264,11 @@ function resolveMin(constraints: Constraint[], ecoFunc: EconomicFunction, margin
     return resolveRes;
 }
 
+function uniquePoins(points: Point[]): Point[] {
+    let tmpPoints: Point[] = [];
+    return tmpPoints;
+}
+
 export const GraphComponent = forwardRef((props: GraphProps, ref) => {
     let margin = props.margin ? props.margin : 50;
     let pointSpace = props.pointSpace ? props.pointSpace : 50;
