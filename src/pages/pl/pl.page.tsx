@@ -8,6 +8,7 @@ import { VariableComponent } from 'src/components/variable/variable.component';
 import { GraphComponent } from 'src/components/graph/graph.component';
 import { EconomicFunction } from 'src/models/economic_function';
 import { ModalComponent } from 'src/components/modal/modal.component';
+import './pl.css';
 
 type PlPageSate = {
     max: {
@@ -252,80 +253,92 @@ export class PLPage extends Component<any, PlPageSate> {
                 <ModalComponent onClose={this.closeModal} hidden={this.state.modal.hidden}>
                     {this.state.modal.content}
                 </ModalComponent>
-                <div>
-                    <VariableComponent
-                        key={'vx'}
-                        varString={this.state.variables.x}
-                        label={'variable 1'}
-                        placeholder={'X'}
-                        onChange={(e) => {
-                            this.handleVarChange(e, 'x');
-                        }}
-                    />
-                    <VariableComponent
-                        key={'vy'}
-                        varString={this.state.variables.y}
-                        label={'variable 2'}
-                        placeholder={'Y'}
-                        onChange={(e) => {
-                            this.handleVarChange(e, 'y');
-                        }}
-                    />
-                </div>
-                <div>
-                    {this.state.constraints.map((constraint) => (
-                        <ConstraintComponent
-                            onClick={this.removeConstraint}
-                            funcString={constraint.getFuncString()}
-                            id={constraint.getId()}
-                            key={'c' + constraint.getId().toString()}
-                            onChange={this.constraintChange}
-                            placeholder={(() => {
-                                return 'Ex : 2' + this.state.variables.x + ' + 4' + this.state.variables.y + ' <= 8';
-                            })()}
-                        />
-                    ))}
-                    <div onClick={this.addNewConstraint}>
-                        <button className='btn'>add</button>
-                    </div>
-                </div>
-                <div>
-                    {
-                        <div>
-                            <select
-                                value={this.state.ecoFunc.getOptimize()}
+                <div className='pl_container'>
+                    <div className='pl_forms'>
+                        <div className='pl_variables'>
+                            <VariableComponent
+                                key={'vx'}
+                                varString={this.state.variables.x}
+                                label={'variable 1'}
+                                placeholder={'X'}
                                 onChange={(e) => {
-                                    this.setFuncEcoState(e, 'optimize');
+                                    this.handleVarChange(e, 'x');
                                 }}
-                            >
-                                <option value='MAX'>MAX</option>
-                                <option value='MIN'>MIN</option>
-                            </select>
-                            <input
-                                value={this.state.ecoFunc.getFuncString()}
+                            />
+                            <VariableComponent
+                                key={'vy'}
+                                varString={this.state.variables.y}
+                                label={'variable 2'}
+                                placeholder={'Y'}
                                 onChange={(e) => {
-                                    this.setFuncEcoState(e, 'func');
+                                    this.handleVarChange(e, 'y');
                                 }}
-                                type='text'
-                                placeholder={(() => {
-                                    return '(Z) Ex: 2' + this.state.variables.x + ' + 3' + this.state.variables.y;
-                                })()}
                             />
                         </div>
-                    }
-                </div>
-                <div>{this.constraintsValidations() && this.state.ecoFunc.isContrainte() && <button onClick={this.resolve}>Resoudre</button>}</div>
-                <div>
-                    {this.constraintsValidations() && (
-                        <GraphComponent
-                            onAlert={this.showModal}
-                            ref={(ref) => (this.graphRef = ref)}
-                            ecoFunc={this.state.ecoFunc}
-                            key={'gc'}
-                            max={this.state.max}
-                            constraints={this.state.constraints}
-                        />
-                    )}
+                        <div className='pl_item'>
+                            <div className='constraints_title'>Constrainte</div>
+                            {this.state.constraints.map((constraint) => (
+                                <ConstraintComponent
+                                    onClick={this.removeConstraint}
+                                    funcString={constraint.getFuncString()}
+                                    id={constraint.getId()}
+                                    key={'c' + constraint.getId().toString()}
+                                    onChange={this.constraintChange}
+                                    placeholder={(() => {
+                                        return 'Ex : 2' + this.state.variables.x + ' + 4' + this.state.variables.y + ' <= 8';
+                                    })()}
+                                />
+                            ))}
+                            <div onClick={this.addNewConstraint}>
+                                <button className='btn'>Ajouter</button>
+                            </div>
+                        </div>
+                        <div className='pl_item'>
+                            <div className='ecoFunc_title'>Fonction economique</div>
+                            {
+                                <div className='ecoFunc_input'>
+                                    <select
+                                        value={this.state.ecoFunc.getOptimize()}
+                                        onChange={(e) => {
+                                            this.setFuncEcoState(e, 'optimize');
+                                        }}
+                                    >
+                                        <option value='MAX'>MAX</option>
+                                        <option value='MIN'>MIN</option>
+                                    </select>
+                                    <input
+                                        value={this.state.ecoFunc.getFuncString()}
+                                        onChange={(e) => {
+                                            this.setFuncEcoState(e, 'func');
+                                        }}
+                                        type='text'
+                                        placeholder={(() => {
+                                            return '(Z) Ex: 2' + this.state.variables.x + ' + 3' + this.state.variables.y;
+                                        })()}
+                                    />
+                                </div>
+                            }
+                        </div>
+                        <div className='pl_item'>
+                            {this.constraintsValidations() && this.state.ecoFunc.isContrainte() && (
+                                <button className='btn' onClick={this.resolve}>
+                                    Resoudre
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    <div className='graph_container'>
+                        {this.constraintsValidations() && (
+                            <GraphComponent
+                                onAlert={this.showModal}
+                                ref={(ref) => (this.graphRef = ref)}
+                                ecoFunc={this.state.ecoFunc}
+                                key={'gc'}
+                                max={this.state.max}
+                                constraints={this.state.constraints}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
         );

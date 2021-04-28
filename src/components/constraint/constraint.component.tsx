@@ -1,4 +1,5 @@
 import { MouseEvent } from 'react';
+import './constraint.css';
 
 export type RemoveConstraint = (event: MouseEvent, id: number) => void;
 export type HandleChange = (event: any, id: number) => void;
@@ -13,7 +14,7 @@ type ConstraintProps = {
 
 export const ConstraintComponent = (props: ConstraintProps) => {
     return (
-        <div>
+        <div className='c_item'>
             <input
                 className='pl_input'
                 type='text'
@@ -24,11 +25,12 @@ export const ConstraintComponent = (props: ConstraintProps) => {
                 placeholder={props.placeholder}
             />
             <button
+                className='c_btn'
                 onClick={(e) => {
                     props.onClick(e, props.id);
                 }}
             >
-                Remove
+                <img src='icon/close.svg' alt='' />
             </button>
         </div>
     );
