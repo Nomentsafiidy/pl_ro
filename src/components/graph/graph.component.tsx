@@ -19,6 +19,7 @@ type Max = {
 };
 
 export type GarphOnAlert = (body: React.ReactNode) => void;
+export type GraphNewSolutions = (solutions: Point[]) => void;
 
 type GraphProps = {
     max: Max;
@@ -28,6 +29,7 @@ type GraphProps = {
     pointSpace?: number;
     ref: any;
     onAlert: GarphOnAlert;
+    newSolutions: GraphNewSolutions;
 };
 
 function calculateWidth(space: number, margin: number, max: Max) {
@@ -284,18 +286,17 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
             };
             if (props.ecoFunc.getOptimize() === Optimize.MIN) {
                 res = resolveMin(props.constraints, props.ecoFunc, margin, pointSpace, props.max);
-                if (res.success) {
-                    (zLine.current as any).setAttribute('d', res.path);
-                } else {
-                    props.onAlert(<div>{res.message}</div>);
-                }
             } else {
                 res = resolveMax(props.constraints, props.ecoFunc, margin, pointSpace, props.max);
-                if (res.success) {
-                    (zLine.current as any).setAttribute('d', res.path);
-                } else {
-                    props.onAlert(<div>{res.message}</div>);
-                }
+            }
+            if (!res.message && res.message !== '') {
+                (zLine.current as any).setAttribute('d', res.path);
+            } else {
+                props.onAlert(<div>{res.message}</div>);
+            }
+            if (res.solution && res.solution.length > 0) {
+                console.log('new solution', res.solution);
+                props.newSolutions(res.solution);
             }
         },
     }));

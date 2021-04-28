@@ -71,6 +71,8 @@ export class PLPage extends Component<any, PlPageSate> {
         this.closeModal = this.closeModal.bind(this);
         this.showModal = this.showModal.bind(this);
         this.resolve = this.resolve.bind(this);
+        this.setSolutionState = this.setSolutionState.bind(this);
+        this.hiddeSolution = this.hiddeSolution.bind(this);
     }
 
     //logic fonction
@@ -114,6 +116,7 @@ export class PLPage extends Component<any, PlPageSate> {
     }
 
     handleVarChange(e: any, variable: string) {
+        this.hiddeSolution();
         this.setState((state, _props) => {
             let tmpVar = state.variables;
             let newVar = {
@@ -195,6 +198,7 @@ export class PLPage extends Component<any, PlPageSate> {
     }
 
     constraintChange(e: any, id: number) {
+        this.hiddeSolution();
         let tmp: Constraint[] = this.state.constraints.map(
             (constraint): Constraint => {
                 if (constraint.getId() === id) {
@@ -213,6 +217,7 @@ export class PLPage extends Component<any, PlPageSate> {
     };
 
     setFuncEcoState(e: any, attr: string) {
+        this.hiddeSolution();
         this.setState((state, _props) => {
             let tmpEcoFunc = state.ecoFunc;
             let max = {
@@ -264,11 +269,15 @@ export class PLPage extends Component<any, PlPageSate> {
     }
 
     setSolutionState(solutions: Point[]) {
-        this.setState({
-            solutions: {
-                hidden: false,
-                value: solutions,
-            },
+        this.setState((_state, _props) => {
+            console.log('solutions**', solutions);
+
+            return {
+                solutions: {
+                    value: solutions,
+                    hidden: false,
+                },
+            };
         });
     }
 
@@ -376,17 +385,19 @@ export class PLPage extends Component<any, PlPageSate> {
                                 <div className='pl_subtitle'>Solution</div>
                                 <div className='pl_solutions'>
                                     {this.state.solutions.value.map((s, si) => {
-                                        <div key={'s' + si.toString()} className='pl_solution_item'>
-                                            <div className='pl_el'>{'S ' + (si + 1).toString() + ' : '}</div>
-                                            <div className='pl_points pl_el'>
-                                                <div className='p_label'>X: </div>
-                                                <div className='p_label'>{s.x}</div>
+                                        return (
+                                            <div key={'ss' + si.toString()} className='pl_solution_item'>
+                                                <div className='pl_el'>{'S ' + (si + 1).toString() + ' : '}</div>
+                                                <div className='pl_points pl_el'>
+                                                    <div className='p_label'>X: </div>
+                                                    <div className='p_label'>{s.x}</div>
+                                                </div>
+                                                <div className='pl_points pl_el'>
+                                                    <div className='p_label'>y: </div>
+                                                    <div className='p_label'>{s.y}</div>
+                                                </div>
                                             </div>
-                                            <div className='pl_points pl_el'>
-                                                <div className='p_label'>y: </div>
-                                                <div className='p_label'>{s.y}</div>
-                                            </div>
-                                        </div>;
+                                        );
                                     })}
                                 </div>
                             </div>
@@ -395,6 +406,7 @@ export class PLPage extends Component<any, PlPageSate> {
                     <div className='graph_container'>
                         {this.constraintsValidations() && (
                             <GraphComponent
+                                newSolutions={this.setSolutionState}
                                 onAlert={this.showModal}
                                 ref={(ref) => (this.graphRef = ref)}
                                 ecoFunc={this.state.ecoFunc}
