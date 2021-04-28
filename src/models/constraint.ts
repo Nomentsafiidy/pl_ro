@@ -18,7 +18,7 @@ export class Constraint {
     public static setVariables = (variables: Variables) => {
         Constraint.variables = variables;
         Constraint.funcRegExp = new RegExp(
-            `^([\+|\-]?)([0-9]{0,})(${Constraint.variables.x})([\+|\-|\*|\/]{1,1})([\+|\-]?)([0-9]{0,})(${Constraint.variables.y})((\=)|(\<\=)|(\>\=)){1,1}([\+|\-]?)([0-9]{1,})$`
+            `^([\+|\-]?)([0-9]{0,})(${Constraint.variables.x})([\+|\-]{1,1})([\+|\-]?)([0-9]{0,})(${Constraint.variables.y})((\=)|(\<\=)|(\>\=)){1,1}([\+|\-]?)([0-9]{1,})$`
         );
     };
 
@@ -86,7 +86,6 @@ export class Constraint {
                 condiOper: tmp[8] as CondiOper,
                 c: tmpC,
             };
-            // debugger;
         }
     }
 
@@ -263,15 +262,18 @@ export class Constraint {
                         y: 0,
                     },
                     {
-                        ...this.getPointByY(this.funcAffine, maxY),
-                    },
-                    {
                         x: maxX,
                         y: 0,
                     },
                     {
+                        ...this.getPointByY(this.funcAffine, maxY),
+                    },
+                    {
                         x: maxX,
                         y: maxY,
+                    },
+                    {
+                        ...this.getPointByY(this.funcAffine, maxY),
                     },
                 ];
             } else if ((points[0].x <= 0 || points[0].y <= 0) && points[1].x >= 0 && points[1].y >= 0) {
@@ -294,6 +296,9 @@ export class Constraint {
                     {
                         x: maxX,
                         y: maxY,
+                    },
+                    {
+                        ...this.getPointByY(this.funcAffine, maxY),
                     },
                 ];
             } else {

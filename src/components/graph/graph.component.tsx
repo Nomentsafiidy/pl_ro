@@ -75,8 +75,11 @@ function getPointPath(margin: number, space: number, max: Max, constraint: Const
     let tmpPoints: Point[] = [];
     if (func === 'getGraphPoints') {
         tmpPoints = constraint.getGraphPoints();
+        console.log('getGraphPoints', tmpPoints);
     } else if (func === 'getNotSolutionsPoints') {
         tmpPoints = constraint.getNotSolutionsPoints(max.posX, max.posY);
+
+        console.log('getNotSolutionsPoints', tmpPoints);
     }
     let tmpP: Point;
     if (tmpPoints.length !== 0) {

@@ -317,7 +317,7 @@ export class PLPage extends Component<any, PlPageSate> {
                             <div className='constraints_title'>Constrainte</div>
                             {this.state.constraints.map((constraint) =>
                                 constraint.isContrainte() ? (
-                                    <>
+                                    <div key={'c' + constraint.getId().toString()}>
                                         <div className='c_fn_indicator' style={{ background: constraint.getColor() }}></div>
                                         <ConstraintComponent
                                             onClick={this.removeConstraint}
@@ -329,7 +329,7 @@ export class PLPage extends Component<any, PlPageSate> {
                                                 return 'Ex : 2' + this.state.variables.x + ' + 4' + this.state.variables.y + ' <= 8';
                                             })()}
                                         />
-                                    </>
+                                    </div>
                                 ) : (
                                     <ConstraintComponent
                                         onClick={this.removeConstraint}
