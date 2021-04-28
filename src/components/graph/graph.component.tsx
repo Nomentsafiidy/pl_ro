@@ -154,7 +154,12 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
             possibleSolution = constraint.getPossibleSolution(possibleSolution);
         }
     });
-    console.log('possibleSolution', possibleSolution);
+    constraints.forEach((constraint) => {
+        if (constraint.isContrainte()) {
+            possibleSolution = constraint.getPossibleSolution(possibleSolution);
+        }
+    });
+    possibleSolution = uniquePoins(possibleSolution);
     let c: number = 0;
     let solution: Point[] = [];
     if (possibleSolution.length !== 0) {
@@ -225,6 +230,12 @@ function resolveMin(constraints: Constraint[], ecoFunc: EconomicFunction, margin
             possibleSolution = constraint.getPossibleSolution(possibleSolution);
         }
     });
+    constraints.forEach((constraint) => {
+        if (constraint.isContrainte()) {
+            possibleSolution = constraint.getPossibleSolution(possibleSolution);
+        }
+    });
+    possibleSolution = uniquePoins(possibleSolution);
     let c: number = ecoFunc.calculate(ecoFunc.getZ(), max.posX, max.posY);
     let solution: Point[] = [];
     if (possibleSolution.length !== 0) {
@@ -268,6 +279,20 @@ function resolveMin(constraints: Constraint[], ecoFunc: EconomicFunction, margin
 
 function uniquePoins(points: Point[]): Point[] {
     let tmpPoints: Point[] = [];
+    points.forEach((point) => {
+        if (tmpPoints.length === 0) {
+            tmpPoints.push(point);
+        } else {
+            for (let it = 0; it < tmpPoints.length; it++) {
+                if (tmpPoints[it].x === point.x && tmpPoints[it].y === point.y) {
+                    break;
+                }
+                if (tmpPoints.length === it + 1) {
+                    tmpPoints.push(point);
+                }
+            }
+        }
+    });
     return tmpPoints;
 }
 
