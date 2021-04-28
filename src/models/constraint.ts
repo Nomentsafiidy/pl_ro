@@ -41,7 +41,6 @@ export class Constraint {
         if (this.isContrainte()) {
             this.color = this.generateColor();
             this.setFunctionAffine(Constraint.funcRegExp, this.funcString);
-            console.log('this.getfunc', this.getFuncAffine());
         }
     };
 
@@ -415,10 +414,45 @@ export class Constraint {
                         break;
                     case '<=':
                         if (ps.x === 0 && ps.y === 2.5) {
-                            console.log(' log func ', this.getFuncAffine());
-                            console.log(' Result', this.calculate(this.getFuncAffine(), ps.x, ps.y), 'c', this.getFuncAffine().c);
+                            console.log(' log func 0 2.5 ', this.getFuncAffine());
                         }
                         if (this.calculate(this.getFuncAffine(), ps.x, ps.y) <= this.getFuncAffine().c) {
+                            if (ps.x === 0 && ps.y === 2.5) {
+                                console.log(' Result', this.calculate(this.getFuncAffine(), ps.x, ps.y), 'c', this.getFuncAffine().c);
+                            }
+                            tmpSolution.push(ps);
+                        }
+                        break;
+                    case '>=':
+                        if (this.calculate(this.getFuncAffine(), ps.x, ps.y) >= this.getFuncAffine().c) {
+                            tmpSolution.push(ps);
+                        }
+                        break;
+                }
+            });
+        }
+        return tmpSolution;
+    }
+
+    getPossibleStrictSolution(possibleSolutions: Point[]): Point[] {
+        let tmpSolution: Point[] = [];
+        let AllPossibleSolutions = possibleSolutions;
+        if (this.getFuncAffine()) {
+            AllPossibleSolutions.forEach((ps) => {
+                switch (this.getFuncAffine().condiOper) {
+                    case '=':
+                        if (this.calculate(this.getFuncAffine(), ps.x, ps.y) === this.getFuncAffine().c) {
+                            tmpSolution.push(ps);
+                        }
+                        break;
+                    case '<=':
+                        if (ps.x === 0 && ps.y === 2.5) {
+                            console.log(' log func 0 2.5 ', this.getFuncAffine());
+                        }
+                        if (this.calculate(this.getFuncAffine(), ps.x, ps.y) <= this.getFuncAffine().c) {
+                            if (ps.x === 0 && ps.y === 2.5) {
+                                console.log(' Result', this.calculate(this.getFuncAffine(), ps.x, ps.y), 'c', this.getFuncAffine().c);
+                            }
                             tmpSolution.push(ps);
                         }
                         break;
