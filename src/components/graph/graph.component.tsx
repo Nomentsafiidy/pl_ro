@@ -75,11 +75,8 @@ function getPointPath(margin: number, space: number, max: Max, constraint: Const
     let tmpPoints: Point[] = [];
     if (func === 'getGraphPoints') {
         tmpPoints = constraint.getGraphPoints();
-        console.log('getGraphPoints', tmpPoints);
     } else if (func === 'getNotSolutionsPoints') {
         tmpPoints = constraint.getNotSolutionsPoints(max.posX, max.posY);
-
-        console.log('getNotSolutionsPoints', tmpPoints);
     }
     let tmpP: Point;
     if (tmpPoints.length !== 0) {
@@ -157,12 +154,15 @@ function resolveMax(constraints: Constraint[], ecoFunc: EconomicFunction, margin
             possibleSolution = constraint.getPossibleSolution(possibleSolution);
         }
     });
+    console.log('----possibleSolution', possibleSolution);
     constraints.forEach((constraint) => {
         if (constraint.isContrainte()) {
             possibleSolution = constraint.getPossibleSolution(possibleSolution);
         }
     });
+    console.log('++++possibleSolution', possibleSolution);
     possibleSolution = uniquePoins(possibleSolution);
+    console.log('===possibleSolution', possibleSolution);
     let c: number = 0;
     let solution: Point[] = [];
     if (possibleSolution.length !== 0) {
@@ -345,7 +345,7 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
                     <g className='g_y_point'>
                         {numbersArray(1, props.max.posY).map((n, i) => (
                             <text key={'posy' + i.toString()} x={getOriginX(pointSpace, margin, props.max)} y={getOriginY(pointSpace, margin, props.max) - pointSpace * n} className='g_axes_point'>
-                                {n}
+                                {Math.round(n * 10) / 10}
                             </text>
                         ))}
                         {numbersArray(props.max.negY, -1).map((n, i) => (
@@ -355,19 +355,19 @@ export const GraphComponent = forwardRef((props: GraphProps, ref) => {
                                 y={getOriginY(pointSpace, margin, props.max) + pointSpace * -1 * n}
                                 className='g_axes_point'
                             >
-                                {n}
+                                {Math.round(n * 10) / 10}
                             </text>
                         ))}
                     </g>
                     <g className='g_x_point'>
                         {numbersArray(1, props.max.posX).map((n, i) => (
                             <text key={'posx' + i.toString()} x={getOriginX(pointSpace, margin, props.max) + pointSpace * n} y={getOriginY(pointSpace, margin, props.max)} className='g_axes_point'>
-                                {n}
+                                {Math.round(n * 10) / 10}
                             </text>
                         ))}
                         {numbersArray(props.max.negX, -1).map((n, i) => (
                             <text key={'negx' + i.toString()} x={getOriginX(pointSpace, margin, props.max) + pointSpace * n} y={getOriginY(pointSpace, margin, props.max)} className='g_axes_point'>
-                                {n}
+                                {Math.round(n * 10) / 10}
                             </text>
                         ))}
                     </g>

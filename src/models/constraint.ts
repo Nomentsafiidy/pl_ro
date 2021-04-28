@@ -17,9 +17,7 @@ export class Constraint {
 
     public static setVariables = (variables: Variables) => {
         Constraint.variables = variables;
-        Constraint.funcRegExp = new RegExp(
-            `^([\+|\-]?)([0-9]{0,})(${Constraint.variables.x})([\+|\-]{1,1})([\+|\-]?)([0-9]{0,})(${Constraint.variables.y})((\=)|(\<\=)|(\>\=)){1,1}([\+|\-]?)([0-9]{1,})$`
-        );
+        Constraint.funcRegExp = new RegExp(`^([\+|\-]?)([0-9]{0,})(${Constraint.variables.x})([\+|\-]{1,1})([0-9]{0,})(${Constraint.variables.y})((\=)|(\<\=)|(\>\=)){1,1}([\+|\-]?)([0-9]{1,})$`);
     };
 
     public static getVariables = () => {
@@ -43,6 +41,7 @@ export class Constraint {
         if (this.isContrainte()) {
             this.color = this.generateColor();
             this.setFunctionAffine(Constraint.funcRegExp, this.funcString);
+            console.log('this.getfunc', this.getFuncAffine());
         }
     };
 
@@ -70,9 +69,9 @@ export class Constraint {
         let tmp = func.match(reg);
         if (tmp) {
             let tmpC: number, tmpCY: number, tmpCX: number;
-            tmpCX = tmp[1] === '-' ? (tmp[2] ? -1 * parseFloat(tmp[2]) : -1 * 1) : parseFloat(tmp[2] ? tmp[2] : '1');
-            tmpCY = tmp[5] === '-' ? (tmp[6] ? -1 * parseFloat(tmp[6]) : -1 * 1) : parseFloat(tmp[6] ? tmp[6] : '1');
-            tmpC = tmp[12] === '-' ? -1 * parseFloat(tmp[13]) : parseFloat(tmp[13]);
+            tmpCX = tmp[1] === '-' ? -1 * parseFloat(tmp[2] ? tmp[2] : '1') : parseFloat(tmp[2] ? tmp[2] : '1');
+            tmpCY = tmp[4] === '-' ? -1 * parseFloat(tmp[5] ? tmp[5] : '1') : parseFloat(tmp[5] ? tmp[5] : '1');
+            tmpC = tmp[11] === '-' ? -1 * parseFloat(tmp[12]) : parseFloat(tmp[12]);
             this.funcAffine = {
                 x: {
                     constant: tmpCX,
@@ -80,10 +79,10 @@ export class Constraint {
                 },
                 y: {
                     constant: tmpCY,
-                    parameter: tmp[7],
+                    parameter: tmp[6],
                 },
-                arithOper: tmp[4] as ArithOper,
-                condiOper: tmp[8] as CondiOper,
+                arithOper: '+' as ArithOper,
+                condiOper: tmp[7] as CondiOper,
                 c: tmpC,
             };
         }
@@ -415,6 +414,10 @@ export class Constraint {
                         }
                         break;
                     case '<=':
+                        if (ps.x === 0 && ps.y === 2.5) {
+                            console.log(' log func ', this.getFuncAffine());
+                            console.log(' Result', this.calculate(this.getFuncAffine(), ps.x, ps.y), 'c', this.getFuncAffine().c);
+                        }
                         if (this.calculate(this.getFuncAffine(), ps.x, ps.y) <= this.getFuncAffine().c) {
                             tmpSolution.push(ps);
                         }
