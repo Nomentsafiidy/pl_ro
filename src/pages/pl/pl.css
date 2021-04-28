@@ -62,3 +62,7 @@
 .graph_container {
     margin-left: 32px;
 }
+.c_fn_indicator {
+    width: 80px;
+    height: 10px;
+}

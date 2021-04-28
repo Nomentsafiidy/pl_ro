@@ -277,18 +277,34 @@ export class PLPage extends Component<any, PlPageSate> {
                         </div>
                         <div className='pl_item'>
                             <div className='constraints_title'>Constrainte</div>
-                            {this.state.constraints.map((constraint) => (
-                                <ConstraintComponent
-                                    onClick={this.removeConstraint}
-                                    funcString={constraint.getFuncString()}
-                                    id={constraint.getId()}
-                                    key={'c' + constraint.getId().toString()}
-                                    onChange={this.constraintChange}
-                                    placeholder={(() => {
-                                        return 'Ex : 2' + this.state.variables.x + ' + 4' + this.state.variables.y + ' <= 8';
-                                    })()}
-                                />
-                            ))}
+                            {this.state.constraints.map((constraint) =>
+                                constraint.isContrainte() ? (
+                                    <>
+                                        <div className='c_fn_indicator' style={{ background: constraint.getColor() }}></div>
+                                        <ConstraintComponent
+                                            onClick={this.removeConstraint}
+                                            funcString={constraint.getFuncString()}
+                                            id={constraint.getId()}
+                                            key={'c' + constraint.getId().toString()}
+                                            onChange={this.constraintChange}
+                                            placeholder={(() => {
+                                                return 'Ex : 2' + this.state.variables.x + ' + 4' + this.state.variables.y + ' <= 8';
+                                            })()}
+                                        />
+                                    </>
+                                ) : (
+                                    <ConstraintComponent
+                                        onClick={this.removeConstraint}
+                                        funcString={constraint.getFuncString()}
+                                        id={constraint.getId()}
+                                        key={'c' + constraint.getId().toString()}
+                                        onChange={this.constraintChange}
+                                        placeholder={(() => {
+                                            return 'Ex : 2' + this.state.variables.x + ' + 4' + this.state.variables.y + ' <= 8';
+                                        })()}
+                                    />
+                                )
+                            )}
                             <div onClick={this.addNewConstraint}>
                                 <button className='btn'>Ajouter</button>
                             </div>
